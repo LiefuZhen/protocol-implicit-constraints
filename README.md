@@ -41,6 +41,28 @@ Keep the GitHub repository **private by default**. Do not upload undisclosed PoC
 | `scripts/` | Utility scripts, including JSON validation. |
 | `review/` | Meeting notes and review records. |
 
+## Key Research Documents
+
+| Document | Purpose |
+|---|---|
+| `docs/protocol_survey.md` | T1 protocol survey with pilot recommendations, RFC/OASIS download locations, CVE seeds, and first experiment plans. |
+| `docs/cve_seed_analysis.md` | Detailed seed CVE/advisory analysis for MQTT, CoAP, and DNS; each record includes standard mapping, possible implicit constraint, and T2 review status. |
+| `docs/data_format.md` | Data-format convention for `protocol_profile`, `implementation`, `cve_record`, `candidate_constraint`, and direction records. |
+| `docs/implicit_constraint_types.md` | Working taxonomy of implicit-constraint generation directions, with examples and false-positive risks. |
+| `docs/workflow.md` | Task workflow aligned with the final PPT task dependency graph: T1/T6 upstream, T2/T3/T7 direction path, T4/T5 validation path. |
+
+## Seed JSON Records
+
+The repository now includes concrete seed records, not only empty templates:
+
+- `protocols/mqtt/cves/`: Mosquitto and ProtocolGuard MQTT seed cases.
+- `protocols/mqtt/constraints/`: ClientId, CONNECT first-packet, QoS 2 state, and SUBACK reason-code candidate constraints.
+- `protocols/coap/cves/`: libcoap proxy hostname and OSCORE/CBOR candidate cases.
+- `protocols/coap/constraints/`: Token matching, proxy hostname bounds, and OSCORE CBOR parser-bound candidates.
+- `protocols/dns/cves/`: BIND cache-injection seed case.
+- `protocols/dns/constraints/`: compression-pointer and bailiwick/cache-boundary candidate constraints.
+- `protocols/*/implementations/`: initial implementation records for later T4 work.
+
 ## JSON Validation
 
 Run:

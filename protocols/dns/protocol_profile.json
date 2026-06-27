@@ -1,0 +1,57 @@
+{
+  "protocol_id": "dns",
+  "protocol_name": "Domain Name System",
+  "standard_refs": [
+    {
+      "title": "RFC 1034 - Domain Names - Concepts and Facilities",
+      "type": "IETF RFC",
+      "url": "https://www.rfc-editor.org/rfc/rfc1034.txt",
+      "notes": "DNS concepts and resolver behavior."
+    },
+    {
+      "title": "RFC 1035 - Domain Names - Implementation and Specification",
+      "type": "IETF RFC",
+      "url": "https://www.rfc-editor.org/rfc/rfc1035.txt",
+      "notes": "Message format, label length, compression, and RR encoding."
+    },
+    {
+      "title": "RFC 9267 - DNS RR Processing Anti-Patterns",
+      "type": "IETF RFC",
+      "url": "https://www.rfc-editor.org/rfc/rfc9267.txt",
+      "notes": "Implementation anti-patterns tied to DNS RR processing."
+    },
+    {
+      "title": "RFC 9520 - Negative Caching of DNS Resolution Failures",
+      "type": "IETF RFC",
+      "url": "https://www.rfc-editor.org/rfc/rfc9520.txt",
+      "notes": "Failure caching and resolver behavior."
+    }
+  ],
+  "candidate_status": "high_value_backup",
+  "reason_for_selection": [
+    "Very rich CVE and advisory material.",
+    "Strong implicit constraints around compression, parser termination, cache integrity, and authority boundaries.",
+    "Must be scoped narrowly to avoid resolver-wide complexity."
+  ],
+  "core_entities": [
+    "Name.label_length",
+    "Name.compression_pointer",
+    "RR.RDATA_length",
+    "AdditionalSection.records",
+    "Resolver.cache",
+    "Bailiwick"
+  ],
+  "potential_implicit_constraint_points": [
+    {
+      "entity": "Name.compression_pointer",
+      "direction_hint": "parser_unambiguity",
+      "description": "Pointers must resolve within packet bounds, avoid loops, and preserve the 255-octet expanded-name limit."
+    },
+    {
+      "entity": "Resolver.cache",
+      "direction_hint": "security_boundary_preservation",
+      "description": "Cache insertion must preserve bailiwick/request relevance and avoid trusting forged or unsolicited records."
+    }
+  ],
+  "notes": "First DNS work should be limited to parser/compression or a single cache-boundary case."
+}

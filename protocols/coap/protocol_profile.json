@@ -1,0 +1,63 @@
+{
+  "protocol_id": "coap",
+  "protocol_name": "Constrained Application Protocol",
+  "standard_refs": [
+    {
+      "title": "RFC 7252 - The Constrained Application Protocol (CoAP)",
+      "type": "IETF RFC",
+      "url": "https://www.rfc-editor.org/rfc/rfc7252.txt",
+      "notes": "Core RFC for message format, Token, Message ID, Options, and matching."
+    },
+    {
+      "title": "RFC 7641 - Observing Resources in CoAP",
+      "type": "IETF RFC",
+      "url": "https://www.rfc-editor.org/rfc/rfc7641.txt",
+      "notes": "Observe extension and notification state."
+    },
+    {
+      "title": "RFC 7959 - Block-Wise Transfers in CoAP",
+      "type": "IETF RFC",
+      "url": "https://www.rfc-editor.org/rfc/rfc7959.txt",
+      "notes": "Block-wise transfer and reassembly boundaries."
+    },
+    {
+      "title": "RFC 8323 - CoAP over TCP, TLS, and WebSockets",
+      "type": "IETF RFC",
+      "url": "https://www.rfc-editor.org/rfc/rfc8323.txt",
+      "notes": "Reliable transport extension."
+    }
+  ],
+  "candidate_status": "main_rfc_pilot",
+  "reason_for_selection": [
+    "Best first RFC-based pilot because it is compact but semantically rich.",
+    "Token, Message ID, Options, Observe, and Block-wise transfer naturally expose implicit state and parser constraints.",
+    "libcoap, FreeCoAP, microcoap, and go-coap allow cross-implementation comparison."
+  ],
+  "core_entities": [
+    "Message.Token",
+    "Message.MessageID",
+    "Option.delta_length",
+    "Observe.sequence",
+    "Block1.Block2",
+    "Proxy-Uri",
+    "OSCORE"
+  ],
+  "potential_implicit_constraint_points": [
+    {
+      "entity": "Message.Token",
+      "direction_hint": "state_consistency",
+      "description": "Token must preserve request-response association and must not be truncated or reused across contexts."
+    },
+    {
+      "entity": "Option.delta_length",
+      "direction_hint": "parser_unambiguity",
+      "description": "Malformed option length/delta encodings must not be reinterpreted as other fields."
+    },
+    {
+      "entity": "Proxy-Uri",
+      "direction_hint": "boundary_silence",
+      "description": "Proxy hostnames derived from request options need explicit bounds before address resolution."
+    }
+  ],
+  "notes": "CoAP should become the first strictly RFC-based pilot if MQTT is considered only a motivation case."
+}

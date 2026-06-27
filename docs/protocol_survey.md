@@ -16,6 +16,29 @@ T1 should produce protocols that can support the full research chain:
 
 The key idea inherited from `方案设计.md` is not to freely ask an LLM to "find hidden rules." Instead, we first derive **constraint-generation directions** from real CVE evidence, then use those directions to search the "between the lines" parts of a target standard: silence, ambiguity, conflict, and purpose-mechanism gaps.
 
+This file is the high-level T1 survey. The detailed follow-up material is split into:
+
+| File | Purpose |
+|---|---|
+| `docs/cve_seed_analysis.md` | Detailed CVE/advisory seed descriptions and implicit-constraint hypotheses. |
+| `docs/implicit_constraint_types.md` | Working seed direction taxonomy for boundary silence, purpose-mechanism gaps, parser ambiguity, state consistency, and security-boundary preservation. |
+| `docs/data_format.md` | Concrete JSON data format convention used by `protocols/*/*.json`. |
+| `protocols/<protocol>/` | Protocol profiles, CVE records, implementation records, and candidate constraints. |
+
+## 1.1 Mapping To The PPT Task Graph
+
+The final PPT task graph makes **T1** and **T6** the upstream pair:
+
+| Task | What T1/T6 must already support |
+|---|---|
+| T2 CVE filtering | T1 must provide CVE seeds; T6 must provide `cve_record` format. |
+| T3 direction abstraction | T1 must describe likely implicit shapes; T6 must record direction IDs and candidate links. |
+| T7 constraint generation trial | T1 must provide RFC/OASIS sections; T6 must provide `candidate_constraint` format. |
+| T4 implementation preparation | T1 must list 2-3 implementations per pilot; T6 must provide implementation JSON. |
+| T5 validation walkthrough | T1 must recommend one feasible protocol path; T6 must preserve traceability from CVE to constraint to implementation. |
+
+Accordingly, this repository now includes concrete JSON records under `protocols/mqtt`, `protocols/coap`, and `protocols/dns`, not just templates.
+
 ## 2. Selection Criteria
 
 | Dimension | Requirement | Why it matters |
@@ -143,6 +166,12 @@ The following entries are **T1 seed material only**. They must be rechecked in T
 | CVE-2026-29013 | CoAP | libcoap | OSCORE / CBOR handling | https://nvd.nist.gov/vuln/detail/CVE-2026-29013 | extension format parsing | Is OSCORE/CBOR parsing tied to standard compliance or just memory safety? |
 | RFC 9267 anti-patterns | DNS | Multiple | RR processing, labels, compression | https://datatracker.ietf.org/doc/html/rfc9267 | boundary silence; parsing ambiguity | Which listed anti-patterns map to CVEs and to RFC 1035 constraints? |
 | CVE-2025-40778 | DNS | BIND 9 | Cache / unsolicited RR / bailiwick | https://nvd.nist.gov/vuln/detail/CVE-2025-40778 | purpose-mechanism gap; security boundary | Does the behavior violate an RFC/BCP security boundary or only implementation policy? |
+
+Detailed seed analysis is maintained in `docs/cve_seed_analysis.md`. Machine-readable CVE records are under:
+
+- `protocols/mqtt/cves/`
+- `protocols/coap/cves/`
+- `protocols/dns/cves/`
 
 ## 8. Pilot 1: MQTT
 
@@ -301,3 +330,18 @@ RFC-only plan:
 3. For CoAP, verify libcoap/FreeCoAP build paths and collect issue/advisory material beyond NVD.
 4. For DNS, choose one narrow sub-scope before collecting too many resolver-level cases.
 5. Keep all CVE entries at `review_status: "unreviewed"` until standard text, patch, and root cause are checked together.
+
+## 14. Concrete JSON Records Created For T6
+
+| Category | Files |
+|---|---|
+| Protocol profiles | `protocols/mqtt/protocol_profile.json`, `protocols/coap/protocol_profile.json`, `protocols/dns/protocol_profile.json` |
+| MQTT CVE seeds | `PG-MQTT-CLIENTID-TRUNCATION.json`, `CVE-2023-0809.json`, `CVE-2023-28366.json`, `CVE-2021-34431.json`, `CVE-2024-10525.json` |
+| MQTT candidate constraints | `MQTT-IC-0001.json` through `MQTT-IC-0004.json` |
+| CoAP CVE seeds | `CVE-2025-34468.json`, `CVE-2026-29013.json` |
+| CoAP candidate constraints | `COAP-IC-0001.json` through `COAP-IC-0003.json` |
+| DNS CVE seed | `CVE-2025-40778.json` |
+| DNS candidate constraints | `DNS-IC-0001.json`, `DNS-IC-0002.json` |
+| Implementation records | Mosquitto, Sol, libcoap, FreeCoAP, BIND 9, Dnsmasq, miekg/dns |
+
+These records are deliberately conservative: most are `candidate`, `unreviewed`, or `needs_more_evidence`. That is the correct T1/T6 posture. T2 should upgrade or reject them after checking standard text, patch links, and implementation behavior together.

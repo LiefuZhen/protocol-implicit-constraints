@@ -1,0 +1,34 @@
+{
+  "id": "DNS-IC-0002",
+  "protocol_id": "dns",
+  "source_type": "implicit",
+  "direction": {
+    "direction_id": "security_boundary_preservation",
+    "direction_name": "Resolver cache trust boundary",
+    "description": "Resolver cache insertion must preserve authority, bailiwick, and request relevance."
+  },
+  "spec_ref": {
+    "standard": "RFC 1034 / RFC 1035 / resolver guidance",
+    "section": "Resolver answer processing and cache insertion",
+    "entity": "Resolver.cache",
+    "quote_or_summary": "Exact normative source set requires T2 review with ISC advisory and relevant DNS BCP/RFC material."
+  },
+  "statement": "Resolver cache insertion must preserve bailiwick and request relevance; forged, unsolicited, or out-of-scope RR data must not be inserted as trusted cache data.",
+  "condition": "A resolver processes an answer, authority, or additional-section RR set from an upstream response.",
+  "expected_behavior": "The resolver validates that cached data is relevant and trustworthy for the query/authority context.",
+  "violation_pattern": "The resolver accepts forged or extraneous answer data into cache where it can influence later resolutions.",
+  "bound_goal": "Cache integrity and cache-poisoning resistance",
+  "strength": "L1",
+  "status": "candidate",
+  "related_cves": [
+    "CVE-2025-40778"
+  ],
+  "related_implementations": [
+    "bind9"
+  ],
+  "review": {
+    "review_status": "unreviewed",
+    "reviewer": "",
+    "review_notes": "Strong but complex seed. Needs RFC/BCP/ISC advisory mapping before validation."
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "protocol_id": "mqtt",
+  "protocol_name": "MQTT",
+  "standard_refs": [
+    {
+      "title": "MQTT Version 3.1.1",
+      "type": "OASIS Standard",
+      "url": "https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html",
+      "notes": "Core pilot standard for ClientId, Remaining Length, QoS, SUBACK, and CONNECT behavior."
+    },
+    {
+      "title": "MQTT Version 5.0",
+      "type": "OASIS Standard",
+      "url": "https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html",
+      "notes": "Useful for property, reason-code, and enhanced session/error handling cases."
+    }
+  ],
+  "candidate_status": "main_pilot",
+  "reason_for_selection": [
+    "Directly aligns with the ProtocolGuard ClientId motivation example.",
+    "Small message grammar and easy input construction make it suitable for the first T2/T7 trial.",
+    "Several independent implementations are available for cross-implementation validation."
+  ],
+  "core_entities": [
+    "CONNECT.ClientId",
+    "FixedHeader.RemainingLength",
+    "QoS2.PacketIdentifier",
+    "SUBACK.reason_codes",
+    "SessionState"
+  ],
+  "potential_implicit_constraint_points": [
+    {
+      "entity": "CONNECT.ClientId",
+      "direction_hint": "purpose_mechanism_gap",
+      "description": "Long ClientId support must not silently collapse distinct identities."
+    },
+    {
+      "entity": "CONNECT.initial_packet",
+      "direction_hint": "boundary_silence",
+      "description": "A malformed or non-CONNECT initial packet must not drive unbounded state allocation."
+    },
+    {
+      "entity": "QoS2.PacketIdentifier",
+      "direction_hint": "state_consistency",
+      "description": "Duplicate or incomplete QoS 2 transactions must not leak or duplicate state."
+    },
+    {
+      "entity": "SUBACK.reason_codes",
+      "direction_hint": "message_cardinality_consistency",
+      "description": "Reason-code/result list cardinality must be validated before callback access."
+    }
+  ],
+  "notes": "MQTT is not an IETF RFC protocol, but it is the best first pilot for reproducing the implicit-constraint idea."
+}

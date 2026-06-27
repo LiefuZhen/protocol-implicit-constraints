@@ -1,0 +1,33 @@
+{
+  "id": "COAP-IC-0001",
+  "protocol_id": "coap",
+  "source_type": "implicit",
+  "direction": {
+    "direction_id": "state_consistency",
+    "direction_name": "Token and endpoint matching consistency",
+    "description": "CoAP Token and endpoint context preserve request-response association."
+  },
+  "spec_ref": {
+    "standard": "RFC 7252",
+    "section": "5.3.1 Request/Response Matching",
+    "entity": "Token",
+    "quote_or_summary": "The Token is used to match a response with a request."
+  },
+  "statement": "If a Token is used to match CoAP requests and responses, implementations must not truncate, confuse, or incorrectly reuse Tokens across endpoint or request contexts.",
+  "condition": "A CoAP endpoint receives responses, ACK/RST messages, or notifications involving Tokens and endpoint context.",
+  "expected_behavior": "Matching uses the full Token and relevant endpoint/request context.",
+  "violation_pattern": "A response or state transition is matched using a truncated or stale Token or the wrong endpoint context.",
+  "bound_goal": "Request-response association and message-state consistency",
+  "strength": "L1",
+  "status": "candidate",
+  "related_cves": [],
+  "related_implementations": [
+    "libcoap",
+    "freecoap"
+  ],
+  "review": {
+    "review_status": "unreviewed",
+    "reviewer": "",
+    "review_notes": "Good T7 seed even without a specific CVE; validate against libcoap/FreeCoAP behavior."
+  }
+}

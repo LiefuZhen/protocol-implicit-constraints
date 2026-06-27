@@ -1,0 +1,34 @@
+{
+  "id": "COAP-IC-0003",
+  "protocol_id": "coap",
+  "source_type": "implicit",
+  "direction": {
+    "direction_id": "parser_unambiguity",
+    "direction_name": "Release-build parser bounds",
+    "description": "Parser bounds for OSCORE/CBOR structures must be enforced at runtime."
+  },
+  "spec_ref": {
+    "standard": "CoAP OSCORE-related RFCs",
+    "section": "OSCORE option / CBOR unwrap handling",
+    "entity": "OSCORE CBOR input",
+    "quote_or_summary": "Exact standard mapping is pending T2 review."
+  },
+  "statement": "Malformed OSCORE/CBOR structures must be checked by runtime bounds validation in release builds before byte consumption or allocation-size computation.",
+  "condition": "An endpoint parses OSCORE/CBOR data from peer-controlled CoAP negotiation or response messages.",
+  "expected_behavior": "Bounds checks execute in production builds and reject malformed structures before out-of-bounds reads.",
+  "violation_pattern": "Bounds are enforced only with debug assertions, so release builds continue parsing malformed structures.",
+  "bound_goal": "Secure context negotiation and parser termination/safety",
+  "strength": "L1",
+  "status": "candidate",
+  "related_cves": [
+    "CVE-2026-29013"
+  ],
+  "related_implementations": [
+    "libcoap"
+  ],
+  "review": {
+    "review_status": "needs_more_evidence",
+    "reviewer": "",
+    "review_notes": "Needs OSCORE RFC mapping before use in direction abstraction."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "impl_id": "miekg_dns",
+  "protocol_id": "dns",
+  "name": "miekg/dns",
+  "language": "Go",
+  "repo_url": "https://github.com/miekg/dns",
+  "implementation_type": "dns_library",
+  "independence_note": "Go DNS library useful for packet generation and parser behavior comparison.",
+  "build_status": "unknown",
+  "build_instructions": "To be filled during T4 if used.",
+  "run_instructions": "To be filled during T4.",
+  "test_input_method": "Go unit tests or packet decode harnesses.",
+  "supported_versions": [
+    "DNS"
+  ],
+  "notes": "Useful as a cross-language parser comparison, not a full resolver."
+}

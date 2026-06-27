@@ -1,0 +1,19 @@
+{
+  "impl_id": "bind9",
+  "protocol_id": "dns",
+  "name": "BIND 9",
+  "language": "C",
+  "repo_url": "https://github.com/isc-projects/bind9",
+  "implementation_type": "authoritative_recursive_resolver",
+  "independence_note": "Classic DNS implementation with rich advisory history; high value but high complexity.",
+  "build_status": "unknown",
+  "build_instructions": "To be filled only if DNS cache-boundary work becomes active.",
+  "run_instructions": "To be filled during T4.",
+  "test_input_method": "dig, crafted DNS packets, or focused resolver tests.",
+  "supported_versions": [
+    "DNS",
+    "DNSSEC",
+    "resolver/cache features"
+  ],
+  "notes": "Related seed: CVE-2025-40778."
+}

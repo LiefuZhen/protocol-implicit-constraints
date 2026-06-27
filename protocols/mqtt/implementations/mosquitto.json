@@ -1,0 +1,19 @@
+{
+  "impl_id": "mosquitto",
+  "protocol_id": "mqtt",
+  "name": "Eclipse Mosquitto",
+  "language": "C",
+  "repo_url": "https://github.com/eclipse-mosquitto/mosquitto",
+  "implementation_type": "broker_and_client_library",
+  "independence_note": "Mature independent MQTT broker and client library used as a primary MQTT pilot target.",
+  "build_status": "unknown",
+  "build_instructions": "To be filled during T4 after pinning a version.",
+  "run_instructions": "Use broker plus mosquitto_pub/sub or raw TCP MQTT packets.",
+  "test_input_method": "mosquitto_pub/sub, raw Python socket, or packet-builder scripts.",
+  "supported_versions": [
+    "MQTT 3.1",
+    "MQTT 3.1.1",
+    "MQTT 5.0"
+  ],
+  "notes": "Related seed CVEs include CVE-2023-0809, CVE-2023-28366, CVE-2021-34431, and CVE-2024-10525 for libmosquitto."
+}

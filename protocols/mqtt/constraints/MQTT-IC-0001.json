@@ -1,0 +1,35 @@
+{
+  "id": "MQTT-IC-0001",
+  "protocol_id": "mqtt",
+  "source_type": "implicit",
+  "direction": {
+    "direction_id": "purpose_mechanism_gap",
+    "direction_name": "Purpose-mechanism gap",
+    "description": "The standard allows or describes ClientId identity behavior but does not fully specify long-identifier storage/normalization obligations."
+  },
+  "spec_ref": {
+    "standard": "MQTT 3.1.1",
+    "section": "3.1.3.1 Client Identifier",
+    "entity": "CONNECT.ClientId",
+    "quote_or_summary": "The server must allow ClientIds between 1 and 23 UTF-8 encoded bytes and may allow longer ClientIds."
+  },
+  "statement": "If a server accepts an oversized ClientId, it must preserve the complete identifier or explicitly reject it; it must not silently truncate it in a way that maps distinct ClientIds to the same internal identity.",
+  "condition": "A CONNECT packet contains a ClientId longer than the implementation's internal ClientId buffer or normal support boundary.",
+  "expected_behavior": "The broker rejects the connection or stores/compares the full accepted ClientId for identity and session management.",
+  "violation_pattern": "The broker accepts the connection and silently stores only a prefix, causing two distinct ClientIds with the same prefix to collide.",
+  "bound_goal": "Client identity uniqueness and correct session management",
+  "strength": "L1",
+  "status": "candidate",
+  "related_cves": [
+    "PG-MQTT-CLIENTID-TRUNCATION"
+  ],
+  "related_implementations": [
+    "sol",
+    "mosquitto"
+  ],
+  "review": {
+    "review_status": "triaged",
+    "reviewer": "",
+    "review_notes": "Strong motivation candidate from ProtocolGuard. Reproduce as a safe walkthrough, not as an exploit."
+  }
+}
