@@ -18,7 +18,7 @@
   "candidate_status": "main_pilot",
   "reason_for_selection": [
     "Directly aligns with the ProtocolGuard ClientId motivation example.",
-    "Small message grammar and easy input construction make it suitable for the first T2/T7 trial.",
+    "Small message grammar and easy input construction make it suitable for the first CVE review and constraint generation trial.",
     "Several independent implementations are available for cross-implementation validation."
   ],
   "core_entities": [

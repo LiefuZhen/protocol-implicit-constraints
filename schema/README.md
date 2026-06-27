@@ -8,7 +8,7 @@
 | `candidate_constraint.schema.json` | 候选约束记录模板。 | 复制到 `protocols/<protocol>/constraints/`。 |
 | `implementation.schema.json` | 实现/库/工具记录模板。 | 复制到 `protocols/<protocol>/implementations/`。 |
 | `protocol_profile.schema.json` | 协议试点 profile 模板。 | 复制到 `protocols/<protocol>/protocol_profile.json`。 |
-| `directions.example.json` | 约束生成方向 seed 示例，描述“在标准哪里找、如何反推”。 | T3 后形成正式 direction set。 |
+| `directions.example.json` | 约束生成方向 seed 示例，描述“在标准哪里找、如何反推”。 | 方向归纳后形成正式 direction set。 |
 
 字段含义和状态流转见：
 
@@ -17,7 +17,7 @@
 
 后续任务维护重点：
 
-- T2：补齐 `cve_record` 的三级筛选结论和留存/淘汰原因；
-- T3：基于已接受 seed 形成正式方向集 artifact；
-- T7：将正式方向集蒸馏为提示词，并对齐候选约束字段；
+- CVE 筛选：补齐 `cve_record` 的三级筛选结论和留存/淘汰原因；
+- 方向归纳：基于已接受 seed 形成正式方向集 artifact；
+- 约束生成：将正式方向集蒸馏为提示词，并对齐候选约束字段；
 - 工具扩展：新增字段完整性检查、枚举值检查和表格导出脚本。

@@ -7,8 +7,8 @@
   "implementation_type": "dns_dhcp_tftp",
   "independence_note": "Smaller C implementation than BIND; suitable for parser/compression scoped work.",
   "build_status": "unknown",
-  "build_instructions": "To be filled during T4.",
-  "run_instructions": "To be filled during T4.",
+  "build_instructions": "To be filled during implementation setup.",
+  "run_instructions": "To be filled during implementation setup.",
   "test_input_method": "dig, dnspython, or raw DNS packets.",
   "supported_versions": [
     "DNS"

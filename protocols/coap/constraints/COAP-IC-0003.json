@@ -11,7 +11,7 @@
     "standard": "CoAP OSCORE-related RFCs",
     "section": "OSCORE option / CBOR unwrap handling",
     "entity": "OSCORE CBOR input",
-    "quote_or_summary": "Exact standard mapping is pending T2 review."
+    "quote_or_summary": "Exact standard mapping is pending CVE review."
   },
   "statement": "Malformed OSCORE/CBOR structures must be checked by runtime bounds validation in release builds before byte consumption or allocation-size computation.",
   "condition": "An endpoint parses OSCORE/CBOR data from peer-controlled CoAP negotiation or response messages.",

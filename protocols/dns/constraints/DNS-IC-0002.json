@@ -11,7 +11,7 @@
     "standard": "RFC 1034 / RFC 1035 / resolver guidance",
     "section": "Resolver answer processing and cache insertion",
     "entity": "Resolver.cache",
-    "quote_or_summary": "Exact normative source set requires T2 review with ISC advisory and relevant DNS BCP/RFC material."
+    "quote_or_summary": "Exact normative source set requires CVE review with ISC advisory and relevant DNS BCP/RFC material."
   },
   "statement": "Resolver cache insertion must preserve bailiwick and request relevance; forged, unsolicited, or out-of-scope RR data must not be inserted as trusted cache data.",
   "condition": "A resolver processes an answer, authority, or additional-section RR set from an upstream response.",

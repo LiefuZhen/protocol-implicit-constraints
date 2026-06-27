@@ -7,7 +7,7 @@
   "implementation_type": "client_server_library",
   "independence_note": "Mature CoAP implementation with client/server tools and several public CVE/advisory seeds.",
   "build_status": "unknown",
-  "build_instructions": "To be filled during T4 after version pinning.",
+  "build_instructions": "To be filled during implementation setup after version pinning.",
   "run_instructions": "Use coap-client/coap-server or focused parser/unit entry points.",
   "test_input_method": "coap-client, raw UDP payloads, or unit-level option/parser inputs.",
   "supported_versions": [

@@ -7,7 +7,7 @@
   "implementation_type": "broker_and_client_library",
   "independence_note": "Mature independent MQTT broker and client library used as a primary MQTT pilot target.",
   "build_status": "unknown",
-  "build_instructions": "To be filled during T4 after pinning a version.",
+  "build_instructions": "To be filled during implementation setup after pinning a version.",
   "run_instructions": "Use broker plus mosquitto_pub/sub or raw TCP MQTT packets.",
   "test_input_method": "mosquitto_pub/sub, raw Python socket, or packet-builder scripts.",
   "supported_versions": [

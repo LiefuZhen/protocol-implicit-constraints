@@ -28,6 +28,6 @@
   "review": {
     "review_status": "unreviewed",
     "reviewer": "",
-    "review_notes": "Good T7 seed even without a specific CVE; validate against libcoap/FreeCoAP behavior."
+    "review_notes": "Good constraint generation seed even without a specific CVE; validate against libcoap/FreeCoAP behavior."
   }
 }

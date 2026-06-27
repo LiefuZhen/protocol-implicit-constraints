@@ -38,5 +38,5 @@
   },
   "review_status": "triaged",
   "reviewer": "",
-  "notes": "Strong T1 seed from the ProtocolGuard paper. Treat as motivation and reproduce carefully without publishing weaponized PoC details."
+  "notes": "Strong seed from the ProtocolGuard paper. Treat as motivation and reproduce carefully without publishing weaponized PoC details."
 }

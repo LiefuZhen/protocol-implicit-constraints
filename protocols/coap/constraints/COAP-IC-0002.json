@@ -29,6 +29,6 @@
   "review": {
     "review_status": "unreviewed",
     "reviewer": "",
-    "review_notes": "May be downgraded or rejected if T2 shows generic API misuse rather than CoAP option semantics."
+    "review_notes": "May be downgraded or rejected if CVE review shows generic API misuse rather than CoAP option semantics."
   }
 }

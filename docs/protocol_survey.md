@@ -1,7 +1,7 @@
-# T1 协议调研：面向隐式约束研究的试点协议选择
+# 试点协议调研：面向隐式约束研究的协议选择
 
 > 项目：Security Between the Lines：基于 CVE 实证的协议隐式约束生成与协议合规缺陷检测  
-> 本文任务：完成 T1 调研协议，列出可验证标准/RFC，筛选 2-3 个试点，并说明这些试点如何支撑后续 T2/T3/T7/T4/T5。
+> 本文目标：列出可验证标准/RFC，筛选 2-3 个试点，并说明这些试点如何支撑后续 CVE 筛选、方向归纳、约束生成、实现准备和验证闭环。
 
 ## 1. 调研目标
 
@@ -17,17 +17,17 @@
 
 根据 `方案设计.md`，本项目的关键差异点是：不把隐式约束留到检测时让 LLM 随机“涌现”，而是先从 CVE 中归纳方向，再在检测前系统生成候选约束。
 
-## 2. 与项目任务路线的关系
+## 2. 与研究路线的关系
 
-项目任务路线中，T1/T6 是上游：
+协议调研和数据格式是后续研究步骤的上游基础：
 
-| 下游任务 | T1/T6 需要提前提供什么 |
+| 后续步骤 | 上游资料需要提前提供什么 |
 |---|---|
-| T2 筛 CVE | T1 给 CVE seed，T6 给 `cve_record` 格式。 |
-| T3 归纳方向 | T1 给隐式违背样例，T6 给 direction / constraint 关联字段。 |
-| T7 试生成 | T1 给 RFC/OASIS section，T6 给 `candidate_constraint` 格式。 |
-| T4 找实现 | T1 给实现候选，T6 给 implementation JSON 格式。 |
-| T5 检测闭环 | T1 给可跑通的协议路径，T6 保证 CVE -> 约束 -> 实现可追溯。 |
+| CVE 筛选 | 提供 CVE seed、标准链接和 `cve_record` 格式。 |
+| 方向归纳 | 提供隐式违背样例，以及 direction / constraint 关联字段。 |
+| 约束生成 | 提供 RFC/OASIS section 和 `candidate_constraint` 格式。 |
+| 实现准备 | 提供实现候选和 implementation JSON 格式。 |
+| 验证闭环 | 提供可跑通的协议路径，并保证 CVE -> 约束 -> 实现可追溯。 |
 
 因此，本仓库在 `protocols/` 下提供了具体的 CVE seed、候选约束和实现记录。
 
@@ -37,7 +37,7 @@
 |---|---|---|
 | 标准公开 | 有 RFC/OASIS/ISO 或类似公开标准，最好有 HTML/TXT/PDF。 | 方便复核 `spec_ref`。 |
 | 实现可得 | 至少 2 个独立开源实现。 | 后续可做 cross-implementation 验证。 |
-| CVE/advisory 可得 | 有历史漏洞、公告、patch 或 issue。 | 支撑 T2 和 T3。 |
+| CVE/advisory 可得 | 有历史漏洞、公告、patch 或 issue。 | 支撑 CVE 筛选和方向归纳。 |
 | 复杂度适中 | 消息结构能看懂，输入能构造。 | 避免第一轮陷入环境和复杂状态机。 |
 | 隐式约束明显 | 有标识符、长度、状态、解析歧义、缓存边界等。 | 贴合本项目主题。 |
 | 与相关工作可对照 | 最好和 ProtocolGuard/RFCAudit 等有交集。 | 方便写 related work 和 baseline。 |
@@ -278,8 +278,8 @@ RFC-only 推荐：
 
 ## 12. 下一步
 
-1. T2 优先复核 MQTT ClientId 和 CVE-2024-10525。
+1. 优先复核 MQTT ClientId 和 CVE-2024-10525。
 2. 补 MQTT / CoAP 标准条款摘录到 `protocols/*/notes/`。
-3. 给 CoAP 的 OSCORE seed 补精确 RFC section，再纳入 T3。
+3. 给 CoAP 的 OSCORE seed 补精确 RFC section，再纳入方向归纳。
 4. DNS 优先围绕 compression pointer，后续再扩展到完整 resolver。
-5. T3 前统一更新每个 CVE JSON 的 `review_status`。
+5. 方向归纳前统一更新每个 CVE JSON 的 `review_status`。

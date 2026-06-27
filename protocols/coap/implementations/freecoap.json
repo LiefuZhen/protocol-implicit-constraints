@@ -7,8 +7,8 @@
   "implementation_type": "client_server_proxy",
   "independence_note": "Independent and relatively small CoAP implementation suitable for cross-implementation comparison.",
   "build_status": "unknown",
-  "build_instructions": "To be filled during T4.",
-  "run_instructions": "To be filled during T4.",
+  "build_instructions": "To be filled during implementation setup.",
+  "run_instructions": "To be filled during implementation setup.",
   "test_input_method": "Raw UDP CoAP packets or existing test programs.",
   "supported_versions": [
     "CoAP"

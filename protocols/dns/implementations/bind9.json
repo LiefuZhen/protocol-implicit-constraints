@@ -8,7 +8,7 @@
   "independence_note": "Classic DNS implementation with rich advisory history; high value but high complexity.",
   "build_status": "unknown",
   "build_instructions": "To be filled only if DNS cache-boundary work becomes active.",
-  "run_instructions": "To be filled during T4.",
+  "run_instructions": "To be filled during implementation setup.",
   "test_input_method": "dig, crafted DNS packets, or focused resolver tests.",
   "supported_versions": [
     "DNS",

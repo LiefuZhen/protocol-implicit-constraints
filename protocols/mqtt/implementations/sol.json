@@ -7,8 +7,8 @@
   "implementation_type": "broker",
   "independence_note": "Small MQTT implementation used in the ProtocolGuard motivation example.",
   "build_status": "unknown",
-  "build_instructions": "To be filled during T4.",
-  "run_instructions": "To be filled during T4.",
+  "build_instructions": "To be filled during implementation setup.",
+  "run_instructions": "To be filled during implementation setup.",
   "test_input_method": "Raw MQTT CONNECT packets are sufficient for the ClientId candidate.",
   "supported_versions": [
     "MQTT 3.1.1"

@@ -29,6 +29,6 @@
   "review": {
     "review_status": "triaged",
     "reviewer": "",
-    "review_notes": "Strong field-cardinality seed; exact MQTT 3.1.1 vs 5.0 wording should be quoted in T2."
+    "review_notes": "Strong field-cardinality seed; exact MQTT 3.1.1 vs 5.0 wording should be quoted during CVE review."
   }
 }
