@@ -1,23 +1,44 @@
-# CVE Abduction Prompt
+# CVE 溯因提示词
 
-You are analyzing a protocol-related CVE for implicit standard-constraint research.
+用途：给定一个协议相关 CVE/advisory，分析它为什么会发生，以及它是否可能来自隐式约束违背。
 
-Use only the provided evidence:
+请只基于给定证据回答，不要编造不存在的 patch、PoC 或标准条款。
 
-- CVE description;
-- advisory text;
-- patch or commit diff;
-- related protocol standard text;
-- issue discussion or PoC notes if available.
+## 输入材料
 
-Answer the following:
+- CVE/NVD 描述；
+- 厂商 advisory；
+- patch / commit diff；
+- 相关 RFC/OASIS/ISO 标准片段；
+- issue 讨论；
+- 如果有 PoC，只能使用公开且允许引用的信息。
 
-1. Which protocol mechanism, message, field, state, or parser behavior is involved?
-2. Which standard sections are relevant?
-3. Is there a clear explicit standard rule that directly covers the vulnerable behavior?
-4. If not, where is the standard silent, ambiguous, underspecified, or internally inconsistent?
-5. What implicit constraint would have prevented the bug?
-6. Which protocol goal is broken if the constraint is violated?
-7. Is the case likely explicit, implicit, ambiguous, or out-of-scope?
+## 需要回答的问题
 
-Return a concise evidence-bounded analysis. Do not invent facts not supported by the evidence.
+1. 这个漏洞涉及哪个协议机制、消息、字段、状态或 parser？
+2. 相关标准位置在哪里？请写出 section 和简短摘要。
+3. 标准中是否有一条清晰显式规则直接覆盖该行为？
+4. 如果没有，标准在哪里沉默、含糊、欠定义或前后矛盾？
+5. 可以反推出什么候选隐式约束？
+6. 这条约束绑定哪个协议目标？
+7. 该 CVE 更像：
+   - 显式约束违背；
+   - 隐式约束违背；
+   - 显式 + 隐式混合；
+   - 标准歧义；
+   - 普通内存安全 / out-of-scope；
+   - 证据不足？
+8. 还缺哪些证据？
+
+## 输出格式建议
+
+```text
+结论：
+证据：
+相关标准：
+候选隐式约束：
+绑定协议目标：
+分类：
+不确定点：
+下一步：
+```

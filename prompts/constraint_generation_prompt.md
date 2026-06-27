@@ -1,23 +1,64 @@
-# Constraint Generation Prompt
+# 候选隐式约束生成提示词
 
-You are generating candidate implicit constraints for a target protocol standard.
+用途：把已经归纳出的方向应用到某个目标 RFC/标准，生成候选隐式约束。
 
-Inputs:
+候选约束不是漏洞结论，必须经过人工复核和实现验证。
 
-- target protocol standard excerpts;
-- entity index, if available;
-- reviewed or seed constraint-generation directions;
-- protocol goals and relevant messages/fields/states.
+## 输入
 
-Process:
+- 目标协议标准片段；
+- 协议实体索引：字段、消息、状态、option、ID、cache 等；
+- 约束生成方向；
+- 已知协议目标；
+- 相关 CVE seed，如果有。
 
-1. Locate suspicious standard positions: boundary silence, cross-reference conflict, ambiguous capability scope, and purpose-mechanism gaps.
-2. For each position, identify the matching generation direction.
-3. Generate a concrete candidate implicit constraint.
-4. Bind the constraint to an explicit protocol goal.
-5. Assign strength:
-   - `L1`: logically necessary for the bound protocol goal;
-   - `L2`: convention or best practice, not enough by itself for defect judgment.
-6. Record `spec_ref`, `statement`, `condition`, `expected_behavior`, and `violation_pattern`.
+## 生成步骤
 
-Do not claim a candidate is a confirmed bug. Candidate constraints require independent review and implementation validation.
+1. 在标准中定位可疑位置：
+   - 边界沉默；
+   - 目的与机制脱节；
+   - 交叉引用冲突；
+   - 能力/范围声明含糊；
+   - 状态一致性；
+   - 解析无歧义；
+   - 安全边界保持。
+2. 判断命中哪条 direction。
+3. 写出候选约束 statement。
+4. 写出生效条件 condition。
+5. 写出合规实现 expected_behavior。
+6. 写出违反模式 violation_pattern。
+7. 绑定协议目标 bound_goal。
+8. 判断强度：
+   - `L1`：逻辑必然，违反后破坏明确协议目标；
+   - `L2`：经验/最佳实践，不足以单独判定缺陷。
+
+## 输出格式
+
+尽量输出可填入 `candidate_constraint.schema.json` 的字段：
+
+```json
+{
+  "id": "",
+  "protocol_id": "",
+  "source_type": "implicit",
+  "direction": {},
+  "spec_ref": {},
+  "statement": "",
+  "condition": "",
+  "expected_behavior": "",
+  "violation_pattern": "",
+  "bound_goal": "",
+  "strength": "L1",
+  "status": "candidate",
+  "related_cves": [],
+  "related_implementations": [],
+  "review": {}
+}
+```
+
+## 禁止事项
+
+- 不要把候选约束说成已确认漏洞；
+- 不要生成攻击步骤；
+- 不要引用不存在的 RFC section；
+- 如果标准映射不清楚，明确写 `needs_more_evidence`。

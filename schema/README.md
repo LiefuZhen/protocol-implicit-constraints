@@ -1,13 +1,22 @@
-# Schema Folder
+# schema 目录说明
 
-The files in this folder are **JSON field templates**, not strict JSON Schema Draft validators.
+本目录里的 JSON 文件是**字段模板**，不是严格的 JSON Schema Draft。也就是说，它们主要用于复制后填写，帮助大家保持字段一致；目前的 `scripts/validate_json.py` 只检查 JSON 能否解析，不检查字段是否完整。
 
-| File | Used for |
-|---|---|
-| `cve_record.schema.json` | CVE/advisory seed records in `protocols/<protocol>/cves/`. |
-| `candidate_constraint.schema.json` | Candidate implicit or explicit constraints in `protocols/<protocol>/constraints/`. |
-| `implementation.schema.json` | Implementation/build target records in `protocols/<protocol>/implementations/`. |
-| `protocol_profile.schema.json` | Per-protocol standard and selection profile. |
-| `directions.example.json` | Seed direction examples, not the final T3 direction set. |
+| 文件 | 用途 | 后续应放在哪里 |
+|---|---|---|
+| `cve_record.schema.json` | CVE/advisory seed 记录模板。 | 复制到 `protocols/<protocol>/cves/`。 |
+| `candidate_constraint.schema.json` | 候选约束记录模板。 | 复制到 `protocols/<protocol>/constraints/`。 |
+| `implementation.schema.json` | 实现/库/工具记录模板。 | 复制到 `protocols/<protocol>/implementations/`。 |
+| `protocol_profile.schema.json` | 协议试点 profile 模板。 | 复制到 `protocols/<protocol>/protocol_profile.json`。 |
+| `directions.example.json` | 约束生成方向 seed 示例。 | 当前只是示意，T3 后应产生正式 direction set。 |
 
-For field meaning and status rules, read `docs/data_format.md`.
+字段含义和状态流转见：
+
+- `docs/data_format.md`
+- `docs/implicit_constraint_types.md`
+
+后续如果要做更严格的自动化，可以新增：
+
+- `schema/*.draft.schema.json`：真正 JSON Schema；
+- `scripts/validate_records.py`：检查必填字段、枚举值、ID 命名；
+- `scripts/export_tables.py`：把 JSON 汇总成论文表格。

@@ -1,147 +1,202 @@
-# CVE And Advisory Seed Analysis
+# CVE / Advisory 种子分析
 
-This file expands the T1 survey into T2-ready seed material. It does **not** claim that every CVE below is already an implicit-constraint violation. Each item is a candidate that needs T2 review against standard text, patch, root cause, and implementation behavior.
+本文件把 T1 调研中提到的 CVE/advisory 种子展开成可供 T2 继续复核的材料。注意：这里的结论仍然是 **seed / candidate**，不是最终漏洞分类。
 
-## Evidence Sources Used
+## 1. 证据来源
 
-| Source | Use |
+| 来源 | 用途 |
 |---|---|
-| NVD CVE pages | Public vulnerability descriptions, affected versions, references, CWE labels, CVSS. |
-| RFC Editor / IETF Datatracker | Stable protocol standard text and download locations. |
-| OASIS MQTT specifications | MQTT standard text for MQTT 3.1.1/5.0. |
-| Local ProtocolGuard paper PDF | Motivation example and baseline method: rule extraction, static slicing, assertion/fuzzing validation. |
+| NVD CVE 页面 | 获取公开漏洞描述、影响版本、参考链接、CWE/CVSS 等。 |
+| RFC Editor / IETF Datatracker | 获取 RFC 标准文本和稳定下载地址。 |
+| OASIS MQTT 标准 | 获取 MQTT 3.1.1 / 5.0 标准文本。 |
+| 本地 ProtocolGuard 论文 PDF | 获取 ClientId 动机例子和 ProtocolGuard 方法基线。 |
 
-## Summary Table
+## 2. 种子总表
 
-| Seed | Protocol | Implementation | Public source | Mechanism | Likely direction | Current T2 status |
+| Seed | 协议 | 实现 | 公开来源 | 相关机制 | 可能方向 | 当前状态 |
 |---|---|---|---|---|---|---|
-| ProtocolGuard ClientId example | MQTT | Sol | ProtocolGuard paper DOI: https://dx.doi.org/10.14722/ndss.2026.240521 | CONNECT ClientId | `purpose_mechanism_gap`, `ambiguous_capability_scope` | Strong seed |
-| CVE-2023-0809 | MQTT | Mosquitto | https://nvd.nist.gov/vuln/detail/CVE-2023-0809 | Non-CONNECT initial packet | `boundary_silence` | Candidate |
-| CVE-2023-28366 | MQTT | Mosquitto | https://nvd.nist.gov/vuln/detail/CVE-2023-28366 | QoS 2 duplicate message IDs | `state_consistency` | Candidate |
-| CVE-2021-34431 | MQTT | Mosquitto | https://nvd.nist.gov/vuln/detail/CVE-2021-34431 | Crafted MQTT v5 CONNECT | `boundary_silence`, `parser_unambiguity` | Candidate |
-| CVE-2024-10525 | MQTT | libmosquitto | https://nvd.nist.gov/vuln/detail/CVE-2024-10525 | SUBACK without reason codes | `message_cardinality_consistency` | Strong seed |
-| CVE-2025-34468 | CoAP | libcoap | https://nvd.nist.gov/vuln/detail/CVE-2025-34468 | Proxy hostname/address resolution | `boundary_silence` | Weak protocol-compliance seed |
-| CVE-2026-29013 | CoAP | libcoap | https://nvd.nist.gov/vuln/detail/CVE-2026-29013 | OSCORE CBOR unwrap parsing | `parser_unambiguity` | Candidate |
-| CVE-2025-40778 | DNS | BIND 9 | https://nvd.nist.gov/vuln/detail/CVE-2025-40778 | Answer acceptance/cache injection | `security_boundary_preservation` | Strong seed |
-| RFC 9267 anti-pattern examples | DNS | Multiple | https://www.rfc-editor.org/rfc/rfc9267.txt | compression pointer, label length, record count | `parser_unambiguity`, `boundary_silence` | Direction seed |
+| ProtocolGuard ClientId example | MQTT | Sol | https://dx.doi.org/10.14722/ndss.2026.240521 | CONNECT ClientId | `purpose_mechanism_gap`, `ambiguous_capability_scope` | 强 seed |
+| CVE-2023-0809 | MQTT | Mosquitto | https://nvd.nist.gov/vuln/detail/CVE-2023-0809 | 非 CONNECT 初始包 / Remaining Length | `boundary_silence` | 候选 |
+| CVE-2023-28366 | MQTT | Mosquitto | https://nvd.nist.gov/vuln/detail/CVE-2023-28366 | QoS 2 duplicate message ID | `state_consistency` | 候选 |
+| CVE-2021-34431 | MQTT | Mosquitto | https://nvd.nist.gov/vuln/detail/CVE-2021-34431 | MQTT v5 crafted CONNECT | `boundary_silence`, `parser_unambiguity` | 候选 |
+| CVE-2024-10525 | MQTT | libmosquitto | https://nvd.nist.gov/vuln/detail/CVE-2024-10525 | SUBACK reason codes | `message_cardinality_consistency` | 强 seed |
+| CVE-2025-34468 | CoAP | libcoap | https://nvd.nist.gov/vuln/detail/CVE-2025-34468 | proxy hostname/address resolution | `boundary_silence` | 弱/中 seed |
+| CVE-2026-29013 | CoAP | libcoap | https://nvd.nist.gov/vuln/detail/CVE-2026-29013 | OSCORE CBOR unwrap | `parser_unambiguity` | 需补证据 |
+| CVE-2025-40778 | DNS | BIND 9 | https://nvd.nist.gov/vuln/detail/CVE-2025-40778 | cache injection / answer acceptance | `security_boundary_preservation` | 强 seed 但复杂 |
+| RFC 9267 examples | DNS | 多实现 | https://www.rfc-editor.org/rfc/rfc9267.txt | RR processing / compression / label length | `parser_unambiguity`, `boundary_silence` | 方向 seed |
 
-## MQTT Detailed Seeds
+## 3. MQTT 种子分析
 
-### ProtocolGuard ClientId Silent Truncation
+### 3.1 ProtocolGuard ClientId 静默截断
 
-The ProtocolGuard paper uses a Sol MQTT implementation example where an oversized ClientId is copied into a fixed-size buffer and silently truncated. MQTT 3.1.1 allows ClientIds between 1 and 23 UTF-8 bytes and permits servers to allow longer ClientIds. The implicit issue is that accepting a longer identifier cannot collapse distinct identities into the same internal client/session identity.
+ProtocolGuard 论文中的动机例子来自 Sol MQTT 实现：实现把超长 ClientId 拷贝到固定大小内部缓冲区，导致静默截断。两个不同的长 ClientId 只要前缀相同，就可能映射为同一个内部身份。
 
-| Field | Analysis |
+| 项 | 分析 |
 |---|---|
-| Standard area | MQTT 3.1.1 Section 3.1.3.1 Client Identifier |
-| Candidate implicit constraint | If a broker accepts an oversized ClientId, it must preserve the complete identifier or explicitly reject it; it must not silently truncate it into an identity collision. |
-| Bound goal | Client identity uniqueness, session management, message routing. |
-| Why implicit | The standard's MAY allowance for longer IDs does not spell out storage/normalization obligations, but the identifier purpose requires uniqueness preservation. |
-| T2 action | Recheck MQTT text and Sol code; create a minimal non-exploit walkthrough comparing long ClientIds. |
+| 标准位置 | MQTT 3.1.1 Section 3.1.3.1 Client Identifier |
+| 显式文本摘要 | Server 必须允许 1-23 UTF-8 字节的 ClientId，也可以允许更长 ClientId。 |
+| 隐式约束 | 如果服务端接受超长 ClientId，必须完整保留或显式拒绝，不能静默截断导致身份坍缩。 |
+| 绑定目标 | 客户端身份唯一性、会话管理、消息路由。 |
+| 为什么是隐式 | 标准允许更长 ClientId，但没有直接写“接受后必须完整保留”。该要求由 ClientId 的用途推出。 |
+| T2 动作 | 复核 MQTT 标准原文和 Sol 代码，写安全 walkthrough。 |
 
-### CVE-2023-0809: Mosquitto Initial Packet Resource Allocation
+对应 JSON：
 
-NVD describes Mosquitto before 2.0.16 allocating excessive memory based on malicious initial packets that are not CONNECT packets. This maps naturally to MQTT connection-state handling: the first client packet should establish protocol identity and session state; malformed initial packets should not drive unbounded allocation.
+- `protocols/mqtt/cves/PG-MQTT-CLIENTID-TRUNCATION.json`
+- `protocols/mqtt/constraints/MQTT-IC-0001.json`
 
-| Field | Analysis |
+### 3.2 CVE-2023-0809：Mosquitto 初始非 CONNECT 包导致资源分配
+
+NVD 描述：Mosquitto 2.0.16 之前，恶意初始包如果不是 CONNECT，也可能造成过量内存分配，从而导致远程 DoS。
+
+| 项 | 分析 |
 |---|---|
-| Public description | Excessive allocation from malicious initial non-CONNECT packets. |
-| Candidate standard area | MQTT CONNECT packet and fixed-header Remaining Length handling. |
-| Candidate implicit constraint | Before allocating payload-sized state for a new connection, a broker must validate that the initial packet is a legal CONNECT packet and that its Remaining Length is acceptable for the connection phase. |
-| Bound goal | Connection-state consistency and DoS resistance. |
-| Explicit/implicit status | `unknown` until MQTT text and patch are reviewed; likely boundary-silence plus explicit first-packet semantics. |
-| T2 action | Read Mosquitto 2.0.16 patch/release notes and determine whether the bug is protocol-state compliance or generic resource-throttling. |
+| 相关机制 | MQTT 初始连接阶段、CONNECT、Fixed Header Remaining Length。 |
+| 可能隐式约束 | broker 在为新连接分配大量状态前，应先验证初始包是合法 CONNECT，并且 Remaining Length 在该阶段可接受。 |
+| 绑定目标 | 连接状态一致性、DoS 防护。 |
+| 不确定点 | 可能是协议阶段校验问题，也可能只是通用资源限制问题。 |
+| T2 动作 | 阅读 Mosquitto patch/release notes，确认根因是否与协议阶段合规有关。 |
 
-### CVE-2023-28366: Mosquitto QoS 2 Duplicate Message ID Memory Leak
+对应 JSON：
 
-NVD describes a Mosquitto broker memory leak when clients send many QoS 2 messages with duplicate message IDs and fail to respond to PUBREC. The root cause includes EAGAIN mishandling, so it may be partly implementation/resource management rather than pure protocol compliance.
+- `protocols/mqtt/cves/CVE-2023-0809.json`
+- `protocols/mqtt/constraints/MQTT-IC-0002.json`
 
-| Field | Analysis |
+### 3.3 CVE-2023-28366：Mosquitto QoS 2 重复 message ID 状态泄露
+
+NVD 描述：客户端发送大量 QoS 2 消息并使用重复 message ID，同时不响应 PUBREC，可导致 broker 内存泄露。公开描述中还提到 EAGAIN 处理，因此需要谨慎分类。
+
+| 项 | 分析 |
 |---|---|
-| Public description | Remote abuse through many QoS 2 messages with duplicate message IDs and missing PUBREC response. |
-| Candidate standard area | MQTT QoS 2 packet identifier and PUBREC/PUBREL/PUBCOMP state. |
-| Candidate implicit constraint | Duplicate QoS 2 Packet Identifiers and incomplete handshakes must not create unbounded duplicate state or leak state across retransmission/error paths. |
-| Bound goal | Exactly-once delivery state consistency and resource lifecycle. |
-| Explicit/implicit status | `unknown`; may become `ambiguous` because the NVD root cause mentions libc send EAGAIN. |
-| T2 action | Inspect patch and advisory to separate protocol-state invariant from memory-management bug. |
+| 相关机制 | QoS 2 Packet Identifier、PUBREC/PUBREL/PUBCOMP 状态机。 |
+| 可能隐式约束 | 重复 Packet Identifier 和未完成握手不能导致无限状态积累或资源泄露。 |
+| 绑定目标 | exactly-once 语义、事务状态生命周期。 |
+| 不确定点 | 可能混有通用 send/error handling bug。 |
+| T2 动作 | 读 patch，把协议状态不变量和内存管理根因拆开。 |
 
-### CVE-2021-34431: Mosquitto MQTT v5 Crafted CONNECT Memory Leak
+对应 JSON：
 
-NVD describes a memory leak when an authenticated MQTT v5 client sends a crafted CONNECT message to Mosquitto 1.6-2.0.10. This is a candidate for MQTT v5 property/CONNECT parser boundary review, but the current public summary is not enough to assert an implicit constraint.
+- `protocols/mqtt/cves/CVE-2023-28366.json`
+- `protocols/mqtt/constraints/MQTT-IC-0003.json`
 
-| Field | Analysis |
+### 3.4 CVE-2021-34431：MQTT v5 crafted CONNECT 内存泄露
+
+NVD 描述：Mosquitto 1.6 到 2.0.10 中，认证 MQTT v5 客户端发送 crafted CONNECT 会造成内存泄露。
+
+| 项 | 分析 |
 |---|---|
-| Public description | Authenticated MQTT v5 client sends crafted CONNECT; broker leaks memory; DoS possible. |
-| Candidate standard area | MQTT 5.0 CONNECT properties and connection re-authentication/session transition. |
-| Candidate implicit constraint | A second or malformed CONNECT in an authenticated/session context must be rejected or cleanly transition without leaking allocated parsing/session state. |
-| Bound goal | Session lifecycle consistency and DoS resistance. |
-| Explicit/implicit status | `unknown`; keep as seed only. |
-| T2 action | Review Eclipse bug 573191 and patch to identify exact malformed field. |
+| 相关机制 | MQTT v5 CONNECT、properties、session lifecycle。 |
+| 可能隐式约束 | 畸形 CONNECT / property 输入必须在错误路径释放解析和会话状态。 |
+| 绑定目标 | 会话生命周期一致性、DoS 防护。 |
+| 不确定点 | 当前公开摘要不足以确认具体字段。 |
+| T2 动作 | 查 Eclipse bug/patch，确定 malformed 字段。 |
 
-### CVE-2024-10525: libmosquitto SUBACK Reason Code Cardinality
+对应 JSON：
 
-NVD describes libmosquitto clients making out-of-bounds memory access when a malicious broker sends a crafted SUBACK with no reason codes. This is a strong seed for field-cardinality consistency: a callback that reports subscription results must not assume reason codes exist unless the SUBACK payload actually contains them.
+- `protocols/mqtt/cves/CVE-2021-34431.json`
 
-| Field | Analysis |
+### 3.5 CVE-2024-10525：libmosquitto SUBACK reason code 数量不一致
+
+NVD 描述：恶意 broker 发送没有 reason codes 的 crafted SUBACK，可导致 libmosquitto 客户端在 `on_subscribe` callback 中越界访问。
+
+| 项 | 分析 |
 |---|---|
-| Public description | Crafted SUBACK with no reason codes causes OOB access in `on_subscribe` callback. |
-| Candidate standard area | MQTT 5.0 SUBACK packet payload / reason-code list; MQTT 3.1.1 SUBACK return codes. |
-| Candidate implicit constraint | SUBACK reason-code/result cardinality must be validated against the subscription result list before callback indexing. |
-| Bound goal | Request-response correspondence and memory-safe protocol parsing. |
-| Why useful | This converts a memory-safety CVE into a protocol-structure hypothesis: count/list correspondence is the standard-side oracle to verify. |
-| T2 action | Compare MQTT 3.1.1 and 5.0 SUBACK layouts; inspect patch `8ab20b4...`. |
+| 相关机制 | SUBACK reason codes / return codes。 |
+| 可能隐式约束 | 客户端在 callback 或索引前必须验证 SUBACK result/reason-code 列表是否存在且数量一致。 |
+| 绑定目标 | 请求-响应字段对应关系、安全解析。 |
+| 为什么强 | 这是“字段数量一致性”很清晰的例子，可从内存安全 CVE 反推出协议结构约束。 |
+| T2 动作 | 对比 MQTT 3.1.1 与 MQTT 5.0 SUBACK payload，确认 count/cardinality 关系。 |
 
-## CoAP Detailed Seeds
+对应 JSON：
 
-### CVE-2025-34468: libcoap Proxy Hostname Stack Buffer Overflow
+- `protocols/mqtt/cves/CVE-2024-10525.json`
+- `protocols/mqtt/constraints/MQTT-IC-0004.json`
 
-NVD describes a stack-based buffer overflow in libcoap address resolution when attacker-controlled hostname data is copied into a fixed 256-byte stack buffer, requiring proxy logic to be enabled. This may be weaker for protocol compliance because hostname resolution can be seen as application/API input rather than CoAP message semantics.
+## 4. CoAP 种子分析
 
-| Field | Analysis |
+### 4.1 CVE-2025-34468：libcoap proxy hostname 栈缓冲区溢出
+
+NVD 描述：libcoap proxy 功能开启时，攻击者控制的 hostname 会进入固定大小栈缓冲区，导致溢出。
+
+| 项 | 分析 |
 |---|---|
-| Public description | Proxy hostname copied into fixed buffer without bounds check. |
-| Candidate standard area | RFC 7252 proxy operation and Proxy-Uri / Uri-Host handling. |
-| Candidate implicit constraint | Proxy URI/host input accepted from CoAP requests must be bounded or rejected before address-resolution storage. |
-| Bound goal | Safe proxy request handling and parser/resource bounds. |
-| T2 risk | Could be classified as generic memory safety, not standard compliance. |
-| T2 action | Check whether the hostname comes from CoAP Proxy-Uri/Uri-Host options and whether RFC 7252 defines relevant option length/error behavior. |
+| 相关机制 | Proxy-Uri、Uri-Host、地址解析。 |
+| 可能隐式约束 | 从 CoAP 请求接受的 proxy hostname 必须在进入固定缓冲区前做长度检查或拒绝。 |
+| 绑定目标 | proxy 请求安全处理、host/authority 解析边界。 |
+| 不确定点 | 可能只是通用 API 输入边界，不一定是协议合规。 |
+| T2 动作 | 确认 hostname 是否来自 CoAP option，查 RFC 7252 对 Proxy-Uri/Uri-Host 的长度和错误处理要求。 |
 
-### CVE-2026-29013: libcoap OSCORE CBOR Bounds
+对应 JSON：
 
-NVD describes out-of-bounds reads in libcoap OSCORE Appendix B.2 CBOR unwrap handling because `assert()` was used for bounds checking and removed in release builds. This is a good parser-boundary seed: release builds must enforce standard parser bounds, not rely on debug assertions.
+- `protocols/coap/cves/CVE-2025-34468.json`
+- `protocols/coap/constraints/COAP-IC-0002.json`
 
-| Field | Analysis |
+### 4.2 CVE-2026-29013：libcoap OSCORE CBOR unwrap 边界检查
+
+NVD 描述：libcoap OSCORE Appendix B.2 CBOR unwrap 中使用 `assert()` 做边界检查，release build 去掉 assert 后可能出现越界读取。
+
+| 项 | 分析 |
 |---|---|
-| Public description | Malformed OSCORE options/responses during negotiation trigger CBOR parsing OOB read. |
-| Candidate standard area | OSCORE option/CBOR unwrap handling used by CoAP security context negotiation. |
-| Candidate implicit constraint | Malformed OSCORE/CBOR structures must be checked by runtime bounds validation in release builds before byte consumption or allocation-size computation. |
-| Bound goal | Authenticated context negotiation and parser termination/safety. |
-| T2 risk | Need OSCORE RFC section mapping, not only libcoap source. |
-| T2 action | Add OSCORE RFC references and inspect commit `b7847c4...`. |
+| 相关机制 | OSCORE、CBOR unwrap、安全上下文协商。 |
+| 可能隐式约束 | OSCORE/CBOR 解析必须在 release build 中执行运行时边界检查，不能只靠 debug assert。 |
+| 绑定目标 | 安全上下文协商、解析终止性、安全解析。 |
+| 不确定点 | 需要补 OSCORE 对应 RFC section。 |
+| T2 动作 | 查 OSCORE RFC 与 patch `b7847c4...`，补精确标准映射。 |
 
-## DNS Detailed Seeds
+对应 JSON：
 
-### RFC 9267: DNS RR Processing Anti-Patterns
+- `protocols/coap/cves/CVE-2026-29013.json`
+- `protocols/coap/constraints/COAP-IC-0003.json`
 
-RFC 9267 is valuable because it explicitly bridges RFC 1035 DNS message rules to recurring implementation anti-patterns. It notes that RFC 1035's compression scheme can be misimplemented when parsers blindly follow offsets, allow pointer loops, or fail label/name length validation.
+## 5. DNS 种子分析
 
-| Field | Analysis |
+### 5.1 RFC 9267：DNS RR 处理反模式
+
+RFC 9267 本身不是 CVE，但它对 DNS RR 处理反模式做了标准化总结，很适合帮助建立 DNS parser 方向。
+
+| 项 | 分析 |
 |---|---|
-| Standard base | RFC 1035 Section 2.3.4 and Section 4.1.4. |
-| Candidate implicit constraint | Compression pointers must resolve within packet bounds, point to valid prior name material, and must not form loops or cause expanded names beyond 255 octets. |
-| Bound goal | DNS parser termination, unambiguous name decoding, DoS/RCE prevention. |
-| Why useful | RFC 9267 provides a bridge from explicit RFC 1035 format text to implicit parser-safety obligations. |
-| T2 action | Select one implementation pair and one malformed-packet class; do not try to cover all DNS resolver behavior. |
+| 标准基础 | RFC 1035 Section 2.3.4、Section 4.1.4。 |
+| 相关机制 | label length、domain name length、compression pointer。 |
+| 可能隐式约束 | compression pointer 必须在包内、不能形成循环、展开后不能突破 label/name 长度限制。 |
+| 绑定目标 | DNS 解析终止性、解析无歧义、DoS/RCE 防护。 |
+| T2 动作 | 选一个具体实现和一个具体畸形包类型，不要一次覆盖所有 DNS parser 问题。 |
 
-### CVE-2025-40778: BIND 9 Forged Data Cache Injection
+对应 JSON：
 
-NVD describes BIND being too lenient when accepting records from answers, allowing forged data to enter cache. This is a strong example of security-boundary preservation: a resolver should not treat unrequested or out-of-scope data as trusted cache material.
+- `protocols/dns/constraints/DNS-IC-0001.json`
 
-| Field | Analysis |
+### 5.2 CVE-2025-40778：BIND 9 forged data cache injection
+
+NVD 描述：BIND 9 answer processing 过于宽松，特定情况下可让伪造数据进入 cache。
+
+| 项 | 分析 |
 |---|---|
-| Public description | Forged data can be injected into cache under certain answer-acceptance circumstances. |
-| Candidate standard area | DNS answer processing, authority/additional sections, bailiwick/cache acceptance rules; likely requires RFC plus BCP/ISC advisory review. |
-| Candidate implicit constraint | Resolver cache insertion must preserve bailiwick/request relevance and must not accept extraneous untrusted answer records as trusted cache data. |
-| Bound goal | Cache integrity and poisoning resistance. |
-| Explicit/implicit status | Likely implicit/mixed because cache security boundary spans RFC semantics and resolver policy. |
-| T2 action | Read ISC advisory and determine exact acceptance rule; map to RFC/BCP sections before using as oracle. |
+| 相关机制 | answer/additional section、resolver cache、bailiwick。 |
+| 可能隐式约束 | resolver cache 插入必须保持 bailiwick 和请求相关性；伪造、未请求或越权 RR 不能进入可信 cache。 |
+| 绑定目标 | cache integrity、防缓存投毒。 |
+| 不确定点 | 精确 oracle 可能分散在 RFC、BCP、ISC advisory 中。 |
+| T2 动作 | 阅读 ISC advisory，补 resolver 信任边界的标准/BCP 映射。 |
+
+对应 JSON：
+
+- `protocols/dns/cves/CVE-2025-40778.json`
+- `protocols/dns/constraints/DNS-IC-0002.json`
+
+## 6. T2 复核优先级
+
+建议优先顺序：
+
+1. **ProtocolGuard ClientId seed**：最能讲清楚隐式约束方法动机。
+2. **CVE-2024-10525**：字段数量一致性强，适合从 CVE 反推约束。
+3. **CVE-2023-0809**：适合验证边界沉默，但要小心资源限制与协议合规边界。
+4. **CoAP Token / COAP-IC-0001**：没有强 CVE，但适合 T7 生成试验。
+5. **DNS-IC-0001**：适合 parser 子方向，但不要过早进入完整 DNS resolver。
+
+## 7. 复核时要避免的错误
+
+- 不要因为 CVE 是内存安全漏洞，就自动认为它是协议合规漏洞。
+- 不要因为标准中有 MUST，就自动认为它不是隐式约束；如果多处 MUST 冲突，仍可能是隐式/歧义。
+- 不要把 MAY support 误写成强制义务；必须绑定明确协议目标。
+- 不要把 PoC 或攻击细节写进公开仓库。
+- 不要在 T1 阶段把 `unknown` 强行改成 `implicit`。

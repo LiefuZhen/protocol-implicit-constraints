@@ -1,7 +1,19 @@
-# Meeting Notes
+# 会议与评审记录
 
 ## 2026-06-27
 
-- Initialized repository structure for protocol implicit constraint research.
-- T1 survey recommends MQTT + CoAP, with DNS as a high-value scoped backup.
-- Keep repository private by default because later notes may include candidate vulnerability details, reproduction notes, or PoC leads.
+- 初始化 `protocol-implicit-constraints` 仓库结构。
+- 根据 PPT 任务图确认当前重点是 T1 和 T6，但必须支撑后续 T2/T3/T7/T4/T5。
+- T1 初步推荐：MQTT + CoAP，DNS 作为高价值备选。
+- T6 已建立 JSON 模板、示例记录、协议目录、校验脚本。
+- 后续仓库默认保持 private，因为可能出现候选漏洞、复现笔记、PoC 线索。
+
+## 后续会议需要记录的内容
+
+每次和老师或同学讨论后，建议补：
+
+- 哪些协议继续保留，哪些放弃；
+- 哪些 CVE 被确认进入 T2，哪些被剔除；
+- 哪些候选约束被接受、拒绝或标记为标准歧义；
+- 下一步谁负责读 RFC、读 patch、跑实现；
+- 是否涉及未公开漏洞或敏感复现细节。

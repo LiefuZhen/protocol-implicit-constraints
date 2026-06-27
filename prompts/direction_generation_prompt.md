@@ -1,24 +1,44 @@
-# Direction Generation Prompt
+# 约束生成方向归纳提示词
 
-You are abstracting reusable constraint-generation directions from reviewed CVE abduction records.
+用途：从已经复核过的隐式 CVE 中归纳“约束生成方向”。
 
-Given a set of CVE abduction records, cluster them by:
+注意：这里不要按漏洞危害或 CWE 聚类，而要按“标准哪里留空子、如何反推约束”聚类。
 
-- the shape of the standard defect;
-- where the analyst should look in a standard;
-- how an implicit constraint can be inferred.
+## 输入
 
-Do not cluster primarily by vulnerability impact, CWE, implementation language, or affected project.
+- 一组已经 T2 复核过的 CVE 记录；
+- 每条 CVE 的标准映射；
+- 每条 CVE 的候选隐式约束；
+- 人工复核结论。
 
-For each proposed direction, produce:
+## 聚类依据
 
-- `direction_id`;
-- `direction_name`;
-- standard-defect shape;
-- where to look in a new standard;
-- reverse-inference rule;
-- example CVE records that motivated it;
-- boundary with nearby directions;
-- review risks.
+请按以下维度聚类：
 
-Mark the output as a candidate direction set requiring human review.
+1. 标准缺陷形态：沉默、含糊、欠定义、前后矛盾、目的未落地；
+2. 在标准中如何定位这种位置；
+3. 从该位置如何反推出约束；
+4. 绑定的协议目标；
+5. 误报风险。
+
+## 每条方向输出
+
+每条方向至少包括：
+
+- `direction_id`
+- `direction_name`
+- 中文解释；
+- 适用的标准缺陷形态；
+- 在新 RFC/标准中如何查找；
+- 反推隐式约束的规则；
+- 支撑它的 CVE seed；
+- 不适用情况；
+- 误报风险；
+- 是否建议进入 direction set v0。
+
+## 输出提醒
+
+- 不要声称方向集已经完备；
+- 不要把 CWE 当作本项目方向；
+- 不要把普通内存安全 bug 强行归为隐式约束；
+- 不确定的方向标记为待人工复核。
