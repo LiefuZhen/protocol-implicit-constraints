@@ -5,7 +5,7 @@
 
 ## 1. 调研目标
 
-本调研不是简单列一些协议，而是要选出能支撑完整研究链条的对象：
+本调研用于筛选能够支撑完整研究链条的协议对象：
 
 1. 能从公开 CVE/advisory 中找到协议相关漏洞；
 2. 能把漏洞对齐到 RFC/OASIS/ISO 标准条款；
@@ -17,9 +17,9 @@
 
 根据 `方案设计.md`，本项目的关键差异点是：不把隐式约束留到检测时让 LLM 随机“涌现”，而是先从 CVE 中归纳方向，再在检测前系统生成候选约束。
 
-## 2. 与 PPT 任务图的关系
+## 2. 与项目任务路线的关系
 
-PPT 最后一张图中，T1/T6 是上游：
+项目任务路线中，T1/T6 是上游：
 
 | 下游任务 | T1/T6 需要提前提供什么 |
 |---|---|
@@ -29,7 +29,7 @@ PPT 最后一张图中，T1/T6 是上游：
 | T4 找实现 | T1 给实现候选，T6 给 implementation JSON 格式。 |
 | T5 检测闭环 | T1 给可跑通的协议路径，T6 保证 CVE -> 约束 -> 实现可追溯。 |
 
-因此，本仓库不只放模板，还在 `protocols/` 下放了具体的 CVE seed、候选约束和实现记录。
+因此，本仓库在 `protocols/` 下提供了具体的 CVE seed、候选约束和实现记录。
 
 ## 3. 试点选择标准
 
@@ -50,8 +50,8 @@ PPT 最后一张图中，T1/T6 是上游：
 | CoAP | IETF RFC | RFC 7252, 7641, 7959, 8323 | 多 | 中 | 中高 | 中 | RFC 主试点 |
 | DNS | IETF RFC | RFC 1034, 1035, 6891, 7766, 9267, 9520 | 多 | 高 | 很高 | 高 | 高价值备选 |
 | FTP | IETF RFC | RFC 959, 3659 | 多 | 中 | 中 | 中 | RFC 兜底 |
-| TLS | IETF RFC | RFC 8446 | 多 | 高 | 高 | 很高 | 第一轮不建议 |
-| QUIC | IETF RFC | RFC 9000 系列 | 多 | 中高 | 高 | 很高 | 第一轮不建议 |
+| TLS | IETF RFC | RFC 8446 | 多 | 高 | 高 | 很高 | 后期高价值目标 |
+| QUIC | IETF RFC | RFC 9000 系列 | 多 | 中高 | 高 | 很高 | 后期迁移验证目标 |
 
 ## 5. 标准与下载地址
 
@@ -135,15 +135,15 @@ MQTT 是最适合第一轮跑通思路的协议：
 - ProtocolGuard 的动机例子正好是 MQTT ClientId；
 - ClientId、Remaining Length、QoS 2、SUBACK 都有明显隐式约束点。
 
-缺点是 MQTT 不是 IETF RFC。如果老师要求“必须都是 RFC”，MQTT 可作为动机案例和 baseline，不作为正式试点。
+MQTT 属于 OASIS/ISO 标准体系。若评估口径要求 IETF RFC 协议，MQTT 可作为动机案例和 baseline，正式试点可转向 CoAP。
 
 ### 7.2 关键隐式约束点
 
 | 实体 | 可疑点 | 候选约束 |
 |---|---|---|
-| CONNECT.ClientId | 标准允许长 ClientId，但没有说接受后如何存储/比较。 | 接受长 ClientId 时不能静默截断导致身份坍缩。 |
-| Initial Packet | 初始包异常时资源分配边界不清。 | 非 CONNECT 初始包不能在校验前触发大内存分配。 |
-| QoS2.PacketIdentifier | 重复 ID / 未完成握手的状态生命周期。 | 重复或未完成 QoS 2 事务不能泄露或无限累积状态。 |
+| CONNECT.ClientId | 标准允许长 ClientId，存储/比较语义需要从身份目标反推。 | 接受长 ClientId 时应保持完整身份语义，避免静默截断导致身份坍缩。 |
+| Initial Packet | 初始包异常时资源分配边界需要明确。 | 非 CONNECT 初始包应在协议阶段校验前完成拒绝或限界处理。 |
+| QoS2.PacketIdentifier | 重复 ID / 未完成握手的状态生命周期。 | 重复或未完成 QoS 2 事务应保持有界状态和资源释放。 |
 | SUBACK.reason_codes | 返回结果数量与订阅请求/回调访问之间的关系。 | callback 索引前必须验证 reason-code/result 数量。 |
 
 ### 7.3 当前 JSON
@@ -182,8 +182,8 @@ CoAP 是第一轮最合适的 RFC 协议：
 | 实体 | 可疑点 | 候选约束 |
 |---|---|---|
 | Token | 用于请求-响应匹配，但实现可能截断/复用/跨上下文混淆。 | Token 匹配必须保持完整 Token 和 endpoint/request 上下文。 |
-| Message ID | ACK/RST 和去重依赖 Message ID。 | ACK/RST 不能跨 endpoint/context 错配。 |
-| Option delta/length | 压缩编码异常处理复杂。 | 异常 option 编码不能被重新解释为其他字段。 |
+| Message ID | ACK/RST 和去重依赖 Message ID。 | ACK/RST 应绑定对应 endpoint/context。 |
+| Option delta/length | 压缩编码异常处理复杂。 | 异常 option 编码应进入明确错误处理。 |
 | Proxy-Uri / Uri-Host | proxy hostname 长度边界。 | hostname 进入固定缓冲区前必须检查长度或拒绝。 |
 | OSCORE / CBOR | 安全上下文解析边界。 | release build 中必须做运行时边界检查。 |
 
@@ -196,7 +196,7 @@ CoAP 是第一轮最合适的 RFC 协议：
 
 ### 8.4 推荐实验路径
 
-第一轮不建议直接做 OSCORE。建议从 Token / Message ID / Option parser 开始：
+第一轮优先从 Token / Message ID / Option parser 开始：
 
 ```text
 标准阅读：RFC 7252 Section 3, 4, 5.3.1, 5.4
@@ -223,7 +223,7 @@ DNS 价值很高，但范围非常大。它的 parser、resolver、cache、DNSSE
 
 | 实体 | 可疑点 | 候选约束 |
 |---|---|---|
-| compression pointer | 指针越界、循环、指向非法位置。 | pointer 必须在包内、不能循环、展开后长度合法。 |
+| compression pointer | 指针越界、循环、指向非法位置。 | pointer 应在包内解析、保持无环，并保证展开后长度合法。 |
 | label/name length | 压缩前后长度约束一致性。 | label/name 长度检查必须在解压前后保持一致。 |
 | Resolver cache | answer/additional 中的 RR 是否可信。 | cache 插入必须保持 bailiwick 和请求相关性。 |
 
@@ -248,11 +248,11 @@ DNS 价值很高，但范围非常大。它的 parser、resolver、cache、DNSSE
   -> 观察：是否拒绝、是否终止、是否解析一致
 ```
 
-## 10. 不建议第一轮主攻的协议
+## 10. 后期目标协议
 
 ### TLS
 
-TLS 1.3 标准和实现都很复杂，状态机、密码学材料、证书、密钥协商、扩展字段交织在一起。适合作为后期高价值目标，不适合作为第一轮 T2/T5。
+TLS 1.3 标准和实现都很复杂，状态机、密码学材料、证书、密钥协商、扩展字段交织在一起。更适合作为后期高价值目标。
 
 ### QUIC / HTTP/2
 
@@ -280,6 +280,6 @@ RFC-only 推荐：
 
 1. T2 优先复核 MQTT ClientId 和 CVE-2024-10525。
 2. 补 MQTT / CoAP 标准条款摘录到 `protocols/*/notes/`。
-3. 给 CoAP 的 OSCORE seed 补精确 RFC section，否则暂不用于 T3。
-4. DNS 暂时只围绕 compression pointer，不扩展到完整 resolver。
+3. 给 CoAP 的 OSCORE seed 补精确 RFC section，再纳入 T3。
+4. DNS 优先围绕 compression pointer，后续再扩展到完整 resolver。
 5. T3 前统一更新每个 CVE JSON 的 `review_status`。
