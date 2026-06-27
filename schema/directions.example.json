@@ -1,0 +1,34 @@
+[
+  {
+    "direction_id": "boundary_silence",
+    "direction_name": "Silence or underspecification around boundary cases",
+    "seed_example": true,
+    "note": "Seed example only; not part of the final direction set until derived and reviewed from CVE evidence.",
+    "description": "Look for places where the standard defines normal behavior but does not clearly define malformed, extreme, out-of-range, or exceptional behavior.",
+    "reverse_inference_hint": "If accepting the abnormal case would break a stated protocol goal, infer a candidate constraint requiring explicit rejection, bounded handling, or consistent normalization."
+  },
+  {
+    "direction_id": "cross_reference_conflict",
+    "direction_name": "Cross-reference conflict or inconsistent descriptions",
+    "seed_example": true,
+    "note": "Seed example only; not part of the final direction set until derived and reviewed from CVE evidence.",
+    "description": "Look for the same entity, field, state, or behavior described in multiple sections with inconsistent scope, strength, or boundary.",
+    "reverse_inference_hint": "Infer a candidate constraint requiring consistent interpretation, or requiring the implementation to follow the stronger safety-preserving interpretation."
+  },
+  {
+    "direction_id": "ambiguous_capability_scope",
+    "direction_name": "Ambiguous capability or support scope",
+    "seed_example": true,
+    "note": "Seed example only; not part of the final direction set until derived and reviewed from CVE evidence.",
+    "description": "Look for text saying an implementation may allow or support something without defining how far that support extends.",
+    "reverse_inference_hint": "Infer that partial support must not silently corrupt, truncate, mis-map, or otherwise violate the protocol goal; unsupported cases should be rejected explicitly."
+  },
+  {
+    "direction_id": "purpose_mechanism_gap",
+    "direction_name": "Purpose-mechanism gap",
+    "seed_example": true,
+    "note": "Seed example only; not part of the final direction set until derived and reviewed from CVE evidence.",
+    "description": "Look for fields or mechanisms whose purpose is stated, but whose required implementation behavior is not fully specified.",
+    "reverse_inference_hint": "Infer the minimum behavior needed to preserve the stated purpose, such as identity uniqueness, request-response association, anti-replay, parser termination, or cache integrity."
+  }
+]

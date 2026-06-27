@@ -1,0 +1,23 @@
+{
+  "protocol_id": "",
+  "protocol_name": "",
+  "standard_refs": [
+    {
+      "title": "",
+      "type": "",
+      "url": "",
+      "notes": ""
+    }
+  ],
+  "candidate_status": "",
+  "reason_for_selection": [],
+  "core_entities": [],
+  "potential_implicit_constraint_points": [
+    {
+      "entity": "",
+      "direction_hint": "",
+      "description": ""
+    }
+  ],
+  "notes": ""
+}

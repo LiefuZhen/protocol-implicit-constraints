@@ -1,0 +1,19 @@
+{
+  "impl_id": "mosquitto",
+  "protocol_id": "mqtt",
+  "name": "Eclipse Mosquitto",
+  "language": "C",
+  "repo_url": "https://github.com/eclipse-mosquitto/mosquitto",
+  "implementation_type": "broker",
+  "independence_note": "Widely used independent MQTT broker implementation.",
+  "build_status": "unknown",
+  "build_instructions": "",
+  "run_instructions": "",
+  "test_input_method": "mosquitto_pub/sub tools or raw MQTT packets over TCP",
+  "supported_versions": [
+    "MQTT 3.1",
+    "MQTT 3.1.1",
+    "MQTT 5.0"
+  ],
+  "notes": "Example implementation record only."
+}

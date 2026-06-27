@@ -1,0 +1,38 @@
+{
+  "cve_id": "",
+  "protocol_id": "",
+  "implementation": "",
+  "affected_versions": [],
+  "summary": "",
+  "vulnerability_type": "",
+  "related_message_or_field": [],
+  "related_standard_refs": [
+    {
+      "standard": "",
+      "section": "",
+      "quote_or_summary": ""
+    }
+  ],
+  "root_cause_summary": "",
+  "classification": {
+    "is_protocol_related": true,
+    "is_standard_compliance_related": "unknown",
+    "explicit_or_implicit": "unknown",
+    "reason": ""
+  },
+  "implicit_constraint_hypothesis": {
+    "direction_hint": "",
+    "missing_or_ambiguous_spec_point": "",
+    "candidate_constraint": "",
+    "bound_goal": ""
+  },
+  "evidence": {
+    "nvd_url": "",
+    "advisory_urls": [],
+    "patch_urls": [],
+    "poc_urls": []
+  },
+  "review_status": "unreviewed",
+  "reviewer": "",
+  "notes": ""
+}

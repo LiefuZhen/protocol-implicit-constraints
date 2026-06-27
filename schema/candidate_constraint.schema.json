@@ -1,0 +1,30 @@
+{
+  "id": "",
+  "protocol_id": "",
+  "source_type": "implicit",
+  "direction": {
+    "direction_id": "",
+    "direction_name": "",
+    "description": ""
+  },
+  "spec_ref": {
+    "standard": "",
+    "section": "",
+    "entity": "",
+    "quote_or_summary": ""
+  },
+  "statement": "",
+  "condition": "",
+  "expected_behavior": "",
+  "violation_pattern": "",
+  "bound_goal": "",
+  "strength": "L1",
+  "status": "candidate",
+  "related_cves": [],
+  "related_implementations": [],
+  "review": {
+    "review_status": "unreviewed",
+    "reviewer": "",
+    "review_notes": ""
+  }
+}

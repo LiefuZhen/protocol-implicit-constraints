@@ -1,0 +1,8 @@
+.tmp/
+__pycache__/
+*.pyc
+
+# Local source/reference materials used to draft the repository artifacts.
+2026-f521-paper.pdf
+T1_protocol_survey (1).md
+方案设计.md
