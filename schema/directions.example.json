@@ -3,32 +3,48 @@
     "direction_id": "boundary_silence",
     "direction_name": "Silence or underspecification around boundary cases",
     "seed_example": true,
-    "note": "Seed example only; not part of the final direction set until derived and reviewed from CVE evidence.",
-    "description": "Look for places where the standard defines normal behavior but does not clearly define malformed, extreme, out-of-range, or exceptional behavior.",
-    "reverse_inference_hint": "If accepting the abnormal case would break a stated protocol goal, infer a candidate constraint requiring explicit rejection, bounded handling, or consistent normalization."
+    "spec_defect_form": "silence_or_underspecification",
+    "where_to_look": "Sections that define normal values, normal message flow, or common cases while leaving malformed, extreme, out-of-range, or exceptional cases unspecified.",
+    "reverse_inference_rule": "If accepting the abnormal case would break a stated protocol goal, infer a candidate constraint requiring explicit rejection, bounded handling, or consistent normalization.",
+    "supporting_cve_seeds": [],
+    "applicability_boundary": "Applies when the abnormal case can be tied to a protocol goal such as parser termination, identity preservation, replay prevention, or interoperability.",
+    "false_positive_risk": "Some standards intentionally leave error handling implementation-defined; such cases require L1/L2 strength review.",
+    "review_status": "seed_example"
   },
   {
     "direction_id": "cross_reference_conflict",
     "direction_name": "Cross-reference conflict or inconsistent descriptions",
     "seed_example": true,
-    "note": "Seed example only; not part of the final direction set until derived and reviewed from CVE evidence.",
-    "description": "Look for the same entity, field, state, or behavior described in multiple sections with inconsistent scope, strength, or boundary.",
-    "reverse_inference_hint": "Infer a candidate constraint requiring consistent interpretation, or requiring the implementation to follow the stronger safety-preserving interpretation."
+    "spec_defect_form": "conflict_or_inconsistent_cross_reference",
+    "where_to_look": "The same entity, field, state, capability, or behavior described in multiple sections with inconsistent scope, strength, or boundary.",
+    "reverse_inference_rule": "Infer a candidate constraint requiring consistent interpretation, or requiring the implementation to follow the stronger safety-preserving interpretation.",
+    "supporting_cve_seeds": [],
+    "applicability_boundary": "Applies when an implementation must choose one interpretation and the weaker choice can break a protocol goal.",
+    "false_positive_risk": "The result may be a standard ambiguity rather than an implementation defect; keep ambiguity as a separate outcome.",
+    "review_status": "seed_example"
   },
   {
     "direction_id": "ambiguous_capability_scope",
     "direction_name": "Ambiguous capability or support scope",
     "seed_example": true,
-    "note": "Seed example only; not part of the final direction set until derived and reviewed from CVE evidence.",
-    "description": "Look for text saying an implementation may allow or support something without defining how far that support extends.",
-    "reverse_inference_hint": "Infer that partial support must not silently corrupt, truncate, mis-map, or otherwise violate the protocol goal; unsupported cases should be rejected explicitly."
+    "spec_defect_form": "ambiguous_capability_scope",
+    "where_to_look": "Text saying an implementation may allow, support, accept, or extend something without defining the extent of that support.",
+    "reverse_inference_rule": "Infer that partial support must preserve protocol goals; unsupported cases should be rejected explicitly rather than silently truncated, corrupted, or mis-mapped.",
+    "supporting_cve_seeds": [],
+    "applicability_boundary": "Applies when the implementation advertises or accepts a capability and then handles only part of its semantic range.",
+    "false_positive_risk": "MAY-level language can weaken defect claims; bind the constraint to a concrete protocol goal before using it as an oracle.",
+    "review_status": "seed_example"
   },
   {
     "direction_id": "purpose_mechanism_gap",
     "direction_name": "Purpose-mechanism gap",
     "seed_example": true,
-    "note": "Seed example only; not part of the final direction set until derived and reviewed from CVE evidence.",
-    "description": "Look for fields or mechanisms whose purpose is stated, but whose required implementation behavior is not fully specified.",
-    "reverse_inference_hint": "Infer the minimum behavior needed to preserve the stated purpose, such as identity uniqueness, request-response association, anti-replay, parser termination, or cache integrity."
+    "spec_defect_form": "stated_goal_without_enforced_mechanism",
+    "where_to_look": "Fields or mechanisms whose purpose is stated, such as identity, correlation, integrity, anti-replay, downgrade prevention, or cache isolation, while the required implementation steps remain implicit.",
+    "reverse_inference_rule": "Infer the minimum behavior needed to preserve the stated purpose, such as uniqueness, request-response association, parser termination, or trust-boundary preservation.",
+    "supporting_cve_seeds": [],
+    "applicability_boundary": "Applies when the purpose is explicit enough that violating it would clearly break protocol semantics.",
+    "false_positive_risk": "The inferred mechanism may be too strong; review whether alternative compliant implementations can preserve the same goal.",
+    "review_status": "seed_example"
   }
 ]

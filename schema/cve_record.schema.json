@@ -14,6 +14,42 @@
     }
   ],
   "root_cause_summary": "",
+  "screening": {
+    "collection": {
+      "source_types": [],
+      "has_description": false,
+      "has_reference_links": false,
+      "has_patch": false,
+      "has_poc": false,
+      "collection_notes": ""
+    },
+    "standard_protocol_filter": {
+      "maps_to_public_standard": "unknown",
+      "mapped_standard_refs": [],
+      "mapped_protocol_goal": "",
+      "filter_decision": "unknown",
+      "rejection_reason": ""
+    },
+    "implicit_violation_filter": {
+      "root_cause_location": {
+        "code_location": "",
+        "handled_message_or_field": "",
+        "patch_or_commit_ref": ""
+      },
+      "spec_alignment": {
+        "standard": "",
+        "section": "",
+        "alignment_summary": ""
+      },
+      "direct_rule_check": {
+        "has_clear_strict_rule": "unknown",
+        "rule_summary": "",
+        "result": "unknown"
+      },
+      "implicit_violation_reason": ""
+    },
+    "retention_decision": "unreviewed"
+  },
   "classification": {
     "is_protocol_related": true,
     "is_standard_compliance_related": "unknown",

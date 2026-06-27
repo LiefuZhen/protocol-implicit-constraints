@@ -4,61 +4,71 @@
 
 > **Security Between the Lines：基于 CVE 实证的协议隐式约束生成与协议合规缺陷检测**
 
-仓库面向协议标准、CVE 证据、候选隐式约束和实现验证资料的统一管理，服务于后续调研、实验复现、论文写作和项目交付。
+当前仓库重点服务 **T1 协议调研** 与 **T6 建仓/格式约定**，并为阶段 I 的 CVE 语料构建、方向归纳和提示词蒸馏预留统一的数据结构。
 
-## 1. 项目概述
+## 1. 项目定位
 
-协议实现通常依据 RFC、OASIS、ISO 等公开标准开发。标准中的约束可分为两类：
+本课题关注协议标准中“字里行间”的隐式约束。协议实现通常依据 RFC、OASIS、ISO 等公开标准开发，标准中的约束可分为两类：
 
-- **显式约束**：标准直接写出的规则，例如 MUST、MUST NOT、字段长度、枚举值、状态机顺序。
-- **隐式约束**：标准未直接写成单条强制规则，但可由协议目标、字段用途、上下文关系或多处条款一致性推出的要求。
-
-本项目关注隐式约束的系统化生成与验证。典型例子是 MQTT ClientId：标准允许服务端支持超过 23 字节的 ClientId；当服务端接受长 ClientId 时，应保持客户端身份唯一性和会话管理语义，避免静默截断造成身份坍缩。
-
-## 2. 研究流程
-
-| 阶段 | 内容 | 主要产物 |
+| 类型 | 含义 | 例子 |
 |---|---|---|
-| T1 协议调研 | 筛选可验证协议/RFC，确定 2-3 个试点。 | 协议调研文档、protocol profile。 |
-| T6 仓库与格式 | 建立资料结构，约定 JSON 数据格式。 | README、schema、示例 JSON、校验脚本。 |
-| T2 CVE 筛选 | 收集 CVE/advisory，判断显式/隐式违背。 | CVE seed JSON、筛选说明。 |
-| T3 方向归纳 | 从隐式 CVE 中归纳约束生成方向。 | direction set v0。 |
-| T7 约束生成 | 用方向分析标准文本并生成候选约束。 | candidate constraint JSON、人工点评。 |
-| T4 实现准备 | 选择并记录 2-3 份独立实现。 | implementation JSON、构建/运行笔记。 |
-| T5 验证闭环 | 对候选约束进行实现验证和 walkthrough。 | 验证记录、裁决结果。 |
+| 显式约束 | 标准直接写出的规则。 | RFC 2119 关键词、字段长度、枚举取值、状态机顺序。 |
+| 隐式约束 | 标准未直接写成单条强制规则，但可由协议目标、字段用途、上下文关系或多处条款一致性推出的要求。 | 接受长标识符时保持身份唯一性；解析压缩指针时保证有界终止；缓存数据保持信任边界。 |
 
-## 3. 当前试点协议
+阶段 I 的目标是从真实 CVE/advisory 中归纳“约束生成方向”，并最终蒸馏为一份可复用的 **隐式约束生成方向提示词**。本仓库当前工作属于阶段 I 的基础建设：确定试点协议、统一资料位置、约定 CVE 与候选约束的数据格式。
 
-| 协议 | 角色 | 标准类型 | 选择理由 | 范围控制 |
+## 2. 当前负责范围
+
+| 任务 | 当前目标 | 当前产物 | 后续衔接 |
+|---|---|---|---|
+| T1 协议调研 | 列出可验证的公开协议/RFC，筛选 2-3 个试点。 | `docs/protocol_survey.md`、协议 profile、实现候选记录。 | 为 T2 CVE 采集、T4 实现准备提供协议范围。 |
+| T6 建仓与格式 | 建立仓库结构，约定 CVE、方向、候选约束和实现记录格式。 | `README.md`、`schema/`、`examples/`、`scripts/validate_json.py`。 | 为 T2/T3/T7/T5 保持可复核的数据入口。 |
+
+T1/T6 阶段会保留少量 CVE seed、候选方向和候选约束示例，用于说明格式和验证研究路线。正式样本筛选、聚类、方向冻结和实现验证由后续任务继续完成。
+
+## 3. 阶段 I 路线
+
+| 步骤 | 说明 | 仓库位置 |
+|---|---|---|
+| CVE 采集 | 从 NVD/CVE、厂商公告、实现 issue/commit/security advisory 收集合规类漏洞。 | `protocols/<protocol>/cves/` |
+| 标准协议筛选 | 保留能映射到公开标准条款或协议目标的漏洞。 | `schema/cve_record.schema.json` 中的 `screening.standard_protocol_filter` |
+| 隐式违背筛选 | 通过“定位漏洞、对齐文档、检查清楚严格限制语句”三步判断显式/隐式违背。 | `screening.implicit_violation_filter` |
+| LLM 溯因 | 记录标准缺陷形态：沉默、含糊、矛盾、目的未落地。 | `implicit_constraint_hypothesis`、`prompts/cve_abduction_prompt.md` |
+| 聚类与方向归纳 | 按“规范缺陷形态 + 反推思路”归纳方向。 | `schema/directions.example.json`、`prompts/direction_generation_prompt.md` |
+| 提示词蒸馏 | 将冻结方向集压缩成阶段 II 使用的方向提示词。 | `prompts/distilled_direction_prompt.v0.md` |
+
+## 4. 当前试点协议
+
+| 协议 | 角色 | 标准类型 | 选择理由 | 当前边界 |
 |---|---|---|---|---|
-| MQTT | 第一主试点 | OASIS/ISO | 与 ProtocolGuard ClientId 案例相关，消息结构清晰，适合说明隐式约束。 | 用作第一条 walkthrough 和方法动机案例。 |
+| MQTT | 第一主试点 | OASIS / ISO | 与 ClientId 身份唯一性案例相关，消息结构清晰，适合说明目的与机制脱节型隐式约束。 | 用作第一条 walkthrough 和方法动机案例。 |
 | CoAP | RFC 主试点 | IETF RFC | IoT 协议，复杂度适中，Token、Message ID、Option 等机制适合约束生成。 | 优先分析 RFC 7252 核心机制。 |
-| DNS | 高价值备选 | IETF RFC | CVE/advisory 丰富，解析歧义和缓存边界适合隐式约束研究。 | 第一轮聚焦 parser/compression 或 cache-boundary 子方向。 |
+| DNS | 高价值备选 | IETF RFC | CVE/advisory 丰富，解析歧义、压缩指针和缓存边界适合隐式约束研究。 | 第一轮聚焦 parser/compression 或 cache-boundary 子方向。 |
 
-## 4. 目录结构
+## 5. 目录结构
 
 | 路径 | 内容 | 后续维护重点 |
 |---|---|---|
-| `docs/` | 研究说明文档，包括协议调研、CVE seed 分析、数据格式、术语和工作流。 | 补充 T2/T3 统计、方向集版本、人工复核结论。 |
-| `schema/` | JSON 字段模板。 | 可升级为严格 JSON Schema，并增加字段完整性检查。 |
-| `prompts/` | CVE 溯因、方向归纳、候选约束生成的提示词草稿。 | 根据 T3/T7 实验效果迭代版本。 |
-| `protocols/` | 按协议组织的标准、CVE、实现、候选约束和笔记。 | 持续补充标准摘录、patch 阅读、实现运行记录。 |
-| `examples/` | 最小示例 JSON。 | 保留作格式示例；正式研究数据放入 `protocols/`。 |
-| `scripts/` | 工具脚本。 | 增加字段校验、统计、表格导出脚本。 |
-| `review/` | 会议与人工评审记录。 | 记录试点选择、CVE 取舍、约束裁决和下一步任务。 |
+| `docs/` | 研究说明文档，包括协议调研、CVE seed 分析、数据格式、方向说明和工作流。 | T2/T3 补充筛选统计、方向集版本、人工复核结论。 |
+| `schema/` | JSON 字段模板和方向示例。 | T6 后续可升级严格 JSON Schema，并增加字段完整性检查。 |
+| `prompts/` | CVE 溯因、方向归纳、候选约束生成、蒸馏提示词草案。 | T3 完成后冻结正式方向提示词。 |
+| `protocols/` | 按协议组织的标准、CVE、实现、候选约束和笔记。 | T2/T4/T5 持续补充 patch 阅读、实现运行记录、验证结果。 |
+| `examples/` | 最小示例 JSON。 | 作为格式参考；正式研究数据进入 `protocols/`。 |
+| `scripts/` | 工具脚本。 | 后续增加字段校验、统计、表格导出脚本。 |
+| `review/` | 会议与人工评审记录。 | 记录试点选择、CVE 取舍、方向裁决和复核结果。 |
 
-## 5. 关键文档
+## 6. 关键文档
 
 | 文件 | 说明 |
 |---|---|
 | `docs/protocol_survey.md` | T1 协议调研，包含标准下载地址、试点推荐和实验路径。 |
+| `docs/workflow.md` | 阶段 I 与 T1/T6/T2/T3/T7/T4/T5 的衔接关系。 |
+| `docs/data_format.md` | JSON 字段含义、三级筛选记录方式和状态流转。 |
 | `docs/cve_seed_analysis.md` | CVE/advisory 种子分析，包含标准映射和隐式约束假设。 |
-| `docs/implicit_constraint_types.md` | 隐式约束类型和生成方向说明。 |
-| `docs/data_format.md` | JSON 字段含义、状态流转和新增记录方式。 |
-| `docs/workflow.md` | 项目研究任务路线。 |
+| `docs/implicit_constraint_types.md` | 种子方向说明，正式方向集由 T3 基于 CVE 聚类形成。 |
 | `docs/terminology.md` | 中英文术语表。 |
 
-## 6. 数据记录概览
+## 7. 数据记录概览
 
 | 协议 | Profile | CVE/Seed | Candidate Constraints | Implementations |
 |---|---|---|---|---|
@@ -66,7 +76,7 @@
 | CoAP | `protocols/coap/protocol_profile.json` | `protocols/coap/cves/` | `protocols/coap/constraints/` | `protocols/coap/implementations/` |
 | DNS | `protocols/dns/protocol_profile.json` | `protocols/dns/cves/` | `protocols/dns/constraints/` | `protocols/dns/implementations/` |
 
-## 7. 数据状态
+## 8. 数据状态
 
 | 状态 | 含义 |
 |---|---|
@@ -80,63 +90,19 @@
 | `ambiguous_spec` | 标准歧义产物。 |
 | `rejected` | 记录已剔除。 |
 
-## 8. 安全与可见性
+## 9. 质量与安全原则
 
-建议 GitHub 仓库保持 **private**。仓库适合保存公开 CVE/NVD/advisory 链接、标准条款摘要、候选约束、实现记录和安全的人工分析笔记。未公开漏洞复现材料、可直接利用的 PoC、真实目标信息、密钥和私密沟通材料应保存在受控环境中。
+| 原则 | 说明 |
+|---|---|
+| 证据可追溯 | CVE/advisory 记录保留公开来源、补丁链接、标准条款映射和筛选结论。 |
+| 判据可复用 | 隐式违背筛选采用定位漏洞、对齐文档、检查严格限制语句的三步流程。 |
+| 方向可冻结 | T3 形成的方向集和蒸馏提示词作为 artifact 固定版本，供阶段 II 使用。 |
+| 材料可控 | 候选漏洞、复现笔记、PoC 线索和敏感验证材料保存在受控访问环境。 |
 
-## 9. JSON 校验
-
-系统 Python 可用时：
+## 10. JSON 校验
 
 ```powershell
 python scripts\validate_json.py
 ```
 
-使用本地运行时 Python：
-
-```powershell
-C:\Users\jzh\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe scripts\validate_json.py
-```
-
 脚本会递归扫描 `.json` 文件，解析成功输出 `[OK] path`，解析失败输出 `[ERROR] path: error`。
-
-## 10. 新增记录
-
-新增 CVE 记录：
-
-```powershell
-Copy-Item schema\cve_record.schema.json protocols\mqtt\cves\CVE-XXXX-XXXX.json
-notepad protocols\mqtt\cves\CVE-XXXX-XXXX.json
-C:\Users\jzh\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe scripts\validate_json.py
-```
-
-新增候选约束：
-
-```powershell
-Copy-Item schema\candidate_constraint.schema.json protocols\mqtt\constraints\MQTT-IC-0005.json
-notepad protocols\mqtt\constraints\MQTT-IC-0005.json
-C:\Users\jzh\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe scripts\validate_json.py
-```
-
-新增实现记录：
-
-```powershell
-Copy-Item schema\implementation.schema.json protocols\mqtt\implementations\new_impl.json
-notepad protocols\mqtt\implementations\new_impl.json
-C:\Users\jzh\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe scripts\validate_json.py
-```
-
-## 11. GitHub private 仓库
-
-在 GitHub 创建 private 仓库 `protocol-implicit-constraints` 后关联远端：
-
-```powershell
-git remote add origin https://github.com/<你的用户名>/protocol-implicit-constraints.git
-git push -u origin main
-```
-
-已设置 remote 时：
-
-```powershell
-git push origin main
-```

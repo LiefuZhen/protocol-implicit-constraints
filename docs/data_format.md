@@ -1,8 +1,8 @@
 # 数据格式约定
 
-本文件解释仓库里的 JSON 应该怎么写。为了后续脚本、统计和 LLM 处理方便，**JSON 字段名保留英文**；中文解释写在本文档中。
+本文件解释仓库里的 JSON 记录方式。为了后续脚本、统计和 LLM 处理方便，**JSON 字段名保留英文**；中文解释写在本文档中。
 
-当前 `schema/*.schema.json` 作为字段模板使用。复制模板后填写即可。
+当前 `schema/*.schema.json` 作为字段模板使用。正式数据放入 `protocols/<protocol>/` 下对应目录。
 
 ## 1. 文件放置位置
 
@@ -12,7 +12,8 @@
 | 实现记录 | `protocols/<protocol>/implementations/<impl_id>.json` | `protocols/mqtt/implementations/mosquitto.json` |
 | CVE/advisory 记录 | `protocols/<protocol>/cves/<cve_id>.json` | `protocols/mqtt/cves/CVE-2024-10525.json` |
 | 候选约束 | `protocols/<protocol>/constraints/<constraint_id>.json` | `protocols/mqtt/constraints/MQTT-IC-0001.json` |
-| 生成方向 | 当前为 `schema/directions.example.json` | T3 后可新增 `directions/directions.v0.json` |
+| 生成方向示例 | `schema/directions.example.json` | T3 后形成正式方向集 artifact |
+| 蒸馏提示词草案 | `prompts/distilled_direction_prompt.v0.md` | T3 后冻结正式版本 |
 
 ## 2. `protocol_profile` 字段说明
 
@@ -29,14 +30,76 @@
 | `potential_implicit_constraint_points` | 潜在隐式约束点。 | 说明 entity、direction_hint、description。 |
 | `notes` | 补充说明。 | 记录风险和范围控制。 |
 
-后续需要补：
+后续需要补充：
 
-- 标准版本是否锁定；
-- 是否下载本地副本；
-- 试点是否最终保留；
+- 标准版本锁定情况；
+- 本地标准副本或引用快照；
+- 试点最终保留结论；
 - 进入 T2/T4 的优先级。
 
-## 3. `implementation` 字段说明
+## 3. `cve_record` 字段说明
+
+CVE 记录服务于 T2。它表示一条可复核的研究样本，重点保存证据、标准映射、三级筛选结论和隐式约束假设。
+
+| 字段 | 中文解释 | 填写建议 |
+|---|---|---|
+| `cve_id` | CVE 编号或稳定 advisory ID。 | 没有 CVE 时可用 `ADVISORY-...`。 |
+| `protocol_id` | 协议 ID。 | 与目录一致。 |
+| `implementation` | 受影响实现。 | 尽量对应 `implementations/` 里的 `impl_id`。 |
+| `affected_versions` | 受影响版本。 | 只写公开来源能确认的版本。 |
+| `summary` | 漏洞摘要。 | 用简短转述概括。 |
+| `vulnerability_type` | 漏洞类型。 | DoS、OOB read、cache poisoning、state leak 等。 |
+| `related_message_or_field` | 相关协议字段/消息/状态。 | 用数组，如 `SUBACK.reason_codes`。 |
+| `related_standard_refs` | 相关标准条款。 | 写 standard、section、quote_or_summary。 |
+| `root_cause_summary` | 根因摘要。 | T2 复核 patch 后继续补。 |
+| `screening` | 三级筛选记录。 | 见下表。 |
+| `classification` | 分类结论。 | 是否协议相关、是否标准合规相关、显式/隐式/未知。 |
+| `implicit_constraint_hypothesis` | 隐式约束假设。 | 写方向、标准缺口、候选约束、绑定目标。 |
+| `evidence` | 证据链接。 | NVD、advisory、patch、PoC 链接。 |
+| `review_status` | 复核状态。 | 初始通常是 `unreviewed`。 |
+| `reviewer` | 复核人。 | 后续填。 |
+| `notes` | 补充说明。 | 记录待补证据和复核事项。 |
+
+### 3.1 三级筛选记录
+
+`screening` 用于把阶段 I 的筛选过程写入 artifact，使样本来源和淘汰原因可复核。
+
+| 子字段 | 中文解释 | 填写建议 |
+|---|---|---|
+| `collection` | 采集信息。 | 记录来源类型、是否有描述、参考链接、补丁、PoC。 |
+| `standard_protocol_filter` | 标准协议筛选。 | 判断漏洞是否能映射到公开标准条款或协议目标。 |
+| `implicit_violation_filter` | 隐式违背筛选。 | 记录根因位置、文档对齐和严格限制语句检查。 |
+| `retention_decision` | 留存结论。 | 如 `keep_for_abduction`、`explicit_reference_only`、`drop_out_of_scope`。 |
+
+`implicit_violation_filter.direct_rule_check.result` 建议取值：
+
+| 取值 | 含义 |
+|---|---|
+| `explicit_violation` | 存在清楚、无歧义、直接管住该行为的严格限制语句。 |
+| `implicit_silence` | 标准对边界、异常、越界或极值处理沉默/欠定义。 |
+| `implicit_ambiguous_or_conflict` | 存在严格语句，但彼此矛盾、范围含糊或无法判定边界。 |
+| `out_of_scope` | 与公开标准条款或协议目标关系弱。 |
+| `unknown` | 证据仍需补充。 |
+
+### 3.2 `classification` 建议取值
+
+| 字段 | 推荐取值 | 说明 |
+|---|---|---|
+| `is_protocol_related` | `true` / `false` | 是否涉及协议消息、字段、状态、parser。 |
+| `is_standard_compliance_related` | `yes` / `no` / `unknown` | 是否能映射到标准合规问题。 |
+| `explicit_or_implicit` | `explicit` / `implicit` / `mixed` / `ambiguous` / `unknown` / `out_of_scope` | 根据三级筛选结论填写。 |
+
+### 3.3 `review_status` 建议取值
+
+| 状态 | 含义 |
+|---|---|
+| `unreviewed` | 只收集了资料，还没有复核。 |
+| `triaged` | 初步看过，适合作为 seed。 |
+| `needs_more_evidence` | 缺 patch、标准映射或 advisory。 |
+| `accepted_seed` | 确认可进入 T3 方向归纳。 |
+| `rejected` | 已从样本集中剔除。 |
+
+## 4. `implementation` 字段说明
 
 实现记录服务于 T4/T5。
 
@@ -56,49 +119,9 @@
 | `supported_versions` | 支持协议版本。 | 例如 MQTT 3.1.1、MQTT 5.0。 |
 | `notes` | 补充说明。 | 记录限制、功能开关、依赖。 |
 
-## 4. `cve_record` 字段说明
-
-CVE 记录服务于 T2。它表示“可复核的研究样本”。
-
-| 字段 | 中文解释 | 填写建议 |
-|---|---|---|
-| `cve_id` | CVE 编号或稳定 advisory ID。 | 没有 CVE 时可用 `ADVISORY-...`。 |
-| `protocol_id` | 协议 ID。 | 与目录一致。 |
-| `implementation` | 受影响实现。 | 尽量对应 `implementations/` 里的 `impl_id`。 |
-| `affected_versions` | 受影响版本。 | 只写公开来源能确认的版本。 |
-| `summary` | 漏洞摘要。 | 用简短转述概括。 |
-| `vulnerability_type` | 漏洞类型。 | DoS、OOB read、cache poisoning、state leak 等。 |
-| `related_message_or_field` | 相关协议字段/消息/状态。 | 用数组，如 `SUBACK.reason_codes`。 |
-| `related_standard_refs` | 相关标准条款。 | 写 standard、section、quote_or_summary。 |
-| `root_cause_summary` | 根因摘要。 | T2 复核 patch 后继续补。 |
-| `classification` | 分类结论。 | 是否协议相关、是否标准合规相关、显式/隐式/未知。 |
-| `implicit_constraint_hypothesis` | 隐式约束假设。 | 写方向、标准缺口、候选约束、绑定目标。 |
-| `evidence` | 证据链接。 | NVD、advisory、patch、PoC 链接。 |
-| `review_status` | 复核状态。 | 初始通常是 `unreviewed`。 |
-| `reviewer` | 复核人。 | 后续填。 |
-| `notes` | 补充说明。 | 记录待补证据和复核事项。 |
-
-### `classification` 建议取值
-
-| 字段 | 推荐取值 | 说明 |
-|---|---|---|
-| `is_protocol_related` | `true` / `false` | 是否涉及协议消息、字段、状态、parser。 |
-| `is_standard_compliance_related` | `yes` / `no` / `unknown` | 是否能映射到标准合规问题。 |
-| `explicit_or_implicit` | `explicit` / `implicit` / `mixed` / `ambiguous` / `unknown` / `out_of_scope` | 证据不足时使用 `unknown`。 |
-
-### `review_status` 建议取值
-
-| 状态 | 含义 |
-|---|---|
-| `unreviewed` | 只收集了资料，还没有复核。 |
-| `triaged` | 初步看过，适合作为 seed。 |
-| `needs_more_evidence` | 缺 patch、标准映射或 advisory。 |
-| `accepted_seed` | 确认可进入 T3 方向归纳。 |
-| `rejected` | 已从样本集中剔除。 |
-
 ## 5. `candidate_constraint` 字段说明
 
-候选约束服务于 T7/T5。它记录“可能成立的协议约束”。
+候选约束服务于 T7/T5。它记录可能成立的协议约束。
 
 | 字段 | 中文解释 | 填写建议 |
 |---|---|---|
@@ -122,7 +145,7 @@ CVE 记录服务于 T2。它表示“可复核的研究样本”。
 
 | 强度 | 含义 | 能否直接支撑缺陷判定 |
 |---|---|---|
-| `L1` | 逻辑必然约束。违反后会破坏明确协议目标。 | 可以，但仍需复核和实现验证。 |
+| `L1` | 逻辑必然约束。违反后会破坏明确协议目标。 | 可以进入缺陷判定，但仍需复核和实现验证。 |
 | `L2` | 经验/最佳实践/鲁棒性约束。 | 作为可疑点或辅助证据使用。 |
 
 ### `status` 建议取值
@@ -138,42 +161,48 @@ CVE 记录服务于 T2。它表示“可复核的研究样本”。
 
 ## 6. 生成方向数据
 
-`schema/directions.example.json` 当前用于 seed examples。正式方向集在 T3 后形成。
+`schema/directions.example.json` 当前用于保存 T1/T6 阶段的种子方向示例。正式方向集在 T3 后形成，并应记录为冻结 artifact。
 
-后续 T3 生成正式方向集时，建议每条方向包含：
+每条方向建议包含：
 
-- `direction_id`
-- `direction_name`
-- 标准缺陷形态；
-- 在标准中如何定位；
-- 如何反推隐式约束；
-- 支撑它的 CVE seed；
-- 适用边界；
-- 误报风险；
-- 人工复核状态。
+| 字段 | 中文解释 |
+|---|---|
+| `direction_id` | 方向 ID。 |
+| `direction_name` | 方向名称。 |
+| `spec_defect_form` | 标准缺陷形态，如沉默、含糊、矛盾、目的未落地。 |
+| `where_to_look` | 在标准中如何定位。 |
+| `reverse_inference_rule` | 如何从该位置反推隐式约束。 |
+| `supporting_cve_seeds` | 支撑该方向的 CVE seed。 |
+| `applicability_boundary` | 适用边界。 |
+| `false_positive_risk` | 误报风险。 |
+| `review_status` | 人工核实状态。 |
 
-## 7. 新增记录流程
+## 7. 蒸馏提示词
 
-新增 CVE：
+阶段 I 最终产物是由方向集蒸馏出的提示词。它面向阶段 II，输入目标标准文本，输出可疑标准位置和候选隐式约束。
+
+提示词版本建议记录：
+
+| 字段/位置 | 中文解释 |
+|---|---|
+| 文件名 | 如 `prompts/distilled_direction_prompt.v0.md`。 |
+| 来源方向集 | 指明对应的 direction set 版本。 |
+| 使用范围 | 指明适用协议范围和阶段。 |
+| 输出格式 | 对齐 `candidate_constraint` 字段。 |
+| 复核要求 | 说明独立复核、L1/L2 分级和绑定协议目标。 |
+
+## 8. 新增记录流程
+
+新增资料时建议遵循：
+
+1. 选择对应协议目录；
+2. 从 `schema/` 复制字段模板；
+3. 填写公开证据、标准条款和复核状态；
+4. 运行 JSON 解析校验；
+5. 在相关文档中补充统计或分析结论。
+
+校验命令：
 
 ```powershell
-Copy-Item schema\cve_record.schema.json protocols\mqtt\cves\CVE-XXXX-XXXX.json
-notepad protocols\mqtt\cves\CVE-XXXX-XXXX.json
-C:\Users\jzh\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe scripts\validate_json.py
-```
-
-新增候选约束：
-
-```powershell
-Copy-Item schema\candidate_constraint.schema.json protocols\mqtt\constraints\MQTT-IC-0005.json
-notepad protocols\mqtt\constraints\MQTT-IC-0005.json
-C:\Users\jzh\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe scripts\validate_json.py
-```
-
-新增实现：
-
-```powershell
-Copy-Item schema\implementation.schema.json protocols\mqtt\implementations\new_impl.json
-notepad protocols\mqtt\implementations\new_impl.json
-C:\Users\jzh\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe scripts\validate_json.py
+python scripts\validate_json.py
 ```
