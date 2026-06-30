@@ -94,12 +94,12 @@
 
 | RFC | 名称 | 作用 | TXT |
 |---|---|---|---|
-| RFC 1034 | Domain Names - Concepts and Facilities | DNS 概念与 resolver 基础。 | https://www.rfc-editor.org/rfc/rfc1034.txt |
-| RFC 1035 | Domain Names - Implementation and Specification | DNS 消息格式、label、compression pointer、RR。 | https://www.rfc-editor.org/rfc/rfc1035.txt |
-| RFC 6891 | EDNS(0) | DNS 扩展机制。 | https://www.rfc-editor.org/rfc/rfc6891.txt |
-| RFC 7766 | DNS over TCP Requirements | DNS over TCP 行为。 | https://www.rfc-editor.org/rfc/rfc7766.txt |
-| RFC 9267 | DNS RR Processing Anti-Patterns | DNS RR 处理反模式。 | https://www.rfc-editor.org/rfc/rfc9267.txt |
-| RFC 9520 | Negative Caching of DNS Resolution Failures | DNS 失败负缓存。 | https://www.rfc-editor.org/rfc/rfc9520.txt |
+| RFC 1034 | Domain Names - Concepts and Facilities | DNS 概念与 resolver 基础。 | https://www.rfc-editor.org/info/rfc1034/ |
+| RFC 1035 | Domain Names - Implementation and Specification | DNS 消息格式、label、compression pointer、RR。 | https://www.rfc-editor.org/info/rfc1035/ |
+| RFC 6891 | EDNS(0) | DNS 扩展机制。 | https://www.rfc-editor.org/info/rfc6891/ |
+| RFC 7766 | DNS over TCP Requirements | DNS over TCP 行为。 | https://www.rfc-editor.org/info/rfc7766/ |
+| RFC 9267 | DNS RR Processing Anti-Patterns | DNS RR 处理反模式。 | https://www.rfc-editor.org/info/rfc9267/ |
+| RFC 9520 | Negative Caching of DNS Resolution Failures | DNS 失败负缓存。 | https://www.rfc-editor.org/info/rfc9520/ |
 
 第一轮 DNS 建议只看：
 
