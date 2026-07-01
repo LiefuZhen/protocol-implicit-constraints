@@ -4,7 +4,7 @@
 
 > **Security Between the Lines：基于 CVE 实证的协议隐式约束生成与协议合规缺陷检测**
 
-仓库当前同时服务于 **T1 协议与 Implementation 调研** 和后续 **T6/T4 Docker 实验准备**。正式区保留可继续维护的仓库骨架、调研文档、字段模板、示例 JSON 和 implementation inventory；尚未复核、不能直接作为实验输入的 prompt、CVE candidate、candidate constraint 等材料统一放在 `draft/`。
+仓库当前聚焦于公开协议标准、开源 Implementation、Specification Section binding、Docker 构建线索和结构化调研材料。正式区保留可继续维护的调研文档、字段模板、示例 JSON 和 implementation inventory；尚未复核、不能直接作为实验输入的 prompt、CVE candidate、candidate constraint 等材料统一放在 `draft/`。
 
 ## 1. 项目定位
 
@@ -15,22 +15,24 @@
 | 显式约束 | 标准直接写出的规则。 | RFC 2119 关键词、字段长度、枚举取值、状态机顺序。 |
 | 隐式约束 | 标准未直接写成单条强制规则，但可由协议目标、字段用途、上下文关系或多处条款一致性推出的要求。 | 接受长标识符时保持身份唯一性；解析压缩指针时保证有界终止；缓存数据保持信任边界。 |
 
-当前重点不是声明完整 pipeline 已经可用，而是先建立可复核的实验对象基础：Implementation、Protocol、Specification、Section binding、仓库来源和 Docker execution recipe。
+当前仓库的主要作用是建立可复核的实验对象基础：Implementation、Protocol、Specification、Section binding、Repo / Artifact source、Docker execution recipe 和推荐 Pilot。
 
-## 2. 当前正式交付
+## 2. 文件说明
 
 | 文件/目录 | 作用 | 当前状态 |
 |---|---|---|
-| `docs/protocol_implementation_survey.md` | T1 主文档。NDSS Table I 风格的 Implementation-centered 实验对象表。 | 正式维护。 |
+| `docs/protocol_implementation_survey.md` | 主调研文档。NDSS Table I 风格的 Implementation-centered 实验对象表，并包含推荐 Pilot。 | 正式维护。 |
+| `docs/docker_execution_recipes.md` | 各 Subject 的 Docker 构建与运行线索。 | 全部标注为未实测，后续需要逐项验证。 |
 | `docs/protocol_survey.md` | 旧版/补充协议调研。 | 可参考，后续以 implementation survey 为主。 |
 | `docs/data_format.md` | JSON 字段含义和填写说明。 | 可参考。 |
-| `docs/workflow.md` | 研究流程说明。 | 可参考，后续按任务分工更新。 |
+| `docs/workflow.md` | 研究流程说明。 | 可参考，后续按实际流程更新。 |
 | `docs/terminology.md` | 中英文术语表。 | 可参考。 |
 | `protocols/*/protocol_profile.json` | 协议 profile。 | 保留为结构化 inventory。 |
-| `protocols/*/implementations/*.json` | 实现记录。 | 保留，后续与 T1/T6 表格对齐。 |
+| `protocols/*/implementations/*.json` | Implementation 记录。 | 保留，后续与调研表对齐。 |
 | `schema/` | 字段模板。 | 保留，但不是严格 JSON Schema。 |
 | `examples/` | 最小示例 JSON。 | 保留为格式示例，不代表正式样本。 |
 | `scripts/validate_json.py` | JSON 语法检查脚本。 | 只检查 JSON parse，不检查字段语义。 |
+| `draft/` | 未复核材料和外部 Artifact。 | 不作为正式结论。 |
 
 ## 3. Draft 材料
 
@@ -39,11 +41,11 @@
 | 路径 | 说明 |
 |---|---|
 | `draft/prompts/` | prompt 草案。正式 prompt 需在 CVE seed 和 direction set 复核后冻结。 |
-| `draft/protocols/*/cves/` | 早期 CVE/advisory candidate。尚未完成 T2 筛选和人工复核。 |
+| `draft/protocols/*/cves/` | 早期 CVE/advisory candidate。尚未完成人工复核。 |
 | `draft/protocols/*/constraints/` | 早期 candidate constraint。尚未被接受为 oracle。 |
 | `draft/old_docs/cve_seed_analysis.md` | CVE seed 草案分析。 |
 | `draft/old_docs/implicit_constraint_types.md` | 隐式约束方向草案。 |
-| `draft/artifacts/` | 外部 artifact 和论文 PDF，仅作为调研来源。 |
+| `draft/artifacts/` | 外部 Artifact 和论文 PDF，仅作为调研来源。 |
 
 ## 4. 目录结构
 
@@ -51,7 +53,8 @@
 .
 ├── README.md
 ├── docs/
-│   ├── protocol_implementation_survey.md  # T1 主交付：Implementation-centered dataset
+│   ├── protocol_implementation_survey.md  # 主调研文档：Implementation-centered dataset 与推荐 Pilot
+│   ├── docker_execution_recipes.md        # Docker 构建与运行线索，当前均未实测
 │   ├── protocol_survey.md                 # 协议调研补充
 │   ├── data_format.md                     # JSON 字段说明
 │   ├── workflow.md                        # 工作流说明
@@ -68,20 +71,15 @@
 ├── examples/                              # 最小格式示例
 ├── scripts/                               # 辅助脚本
 ├── review/                                # 会议/人工评审记录
-└── draft/                                 # 未复核草案与 artifact
+└── draft/                                 # 未复核草案与 Artifact
 ```
 
-## 5. T1 / T6 衔接
+## 5. 建议阅读顺序
 
-T1 的目标是形成 Implementation-centered 调研表，确定哪些 Subject 可作为后续实验对象。T6/T4 的目标是在 Docker 中真正构建、运行和验证这些 Subject。
-
-后续衔接关系：
-
-1. T1：整理 Subject、Protocol、Specification、Section binding、Repo/Artifact source；
-2. T6/T4：为 P0/P1 Subject 编写 Dockerfile，实测 build/run command；
-3. T2：按 Implementation 收集 CVE/advisory，并映射到 Specification Section；
-4. T3：从复核后的 CVE 中归纳 implicit constraint direction；
-5. T7：做 cross-implementation comparison 和动态验证。
+1. 先阅读 `docs/protocol_implementation_survey.md`，了解候选 Protocol、Subject、Specification、Section binding 和推荐 Pilot。
+2. 再阅读 `docs/docker_execution_recipes.md`，查看各 Subject 的未实测 Docker 构建线索。
+3. 如需维护结构化数据，再查看 `protocols/`、`schema/` 和 `examples/`。
+4. `draft/` 中内容只作为草稿或来源材料，引用前需要人工复核。
 
 ## 6. JSON 校验
 
@@ -93,6 +91,3 @@ python scripts\validate_json.py
 
 脚本会递归扫描 `.json` 文件，解析成功输出 `[OK] path`，解析失败输出 `[ERROR] path: error`。它只检查 JSON 语法，不检查字段完整性或研究结论正确性。
 
-## 7. 公开仓库注意事项
-
-当前仓库可以公开维护，因为正式区主要是调研文档、公开 Specification 链接、公开实现仓库和字段模板。后续如果加入未公开漏洞、PoC、复现脚本、敏感补丁分析或未披露结果，应改为 private 或迁移到受控仓库。
