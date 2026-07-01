@@ -1,0 +1,34 @@
+{
+  "id": "MQTT-IC-0002",
+  "protocol_id": "mqtt",
+  "source_type": "implicit",
+  "direction": {
+    "direction_id": "boundary_silence",
+    "direction_name": "Boundary silence around malformed initial packets",
+    "description": "The standard defines CONNECT as the connection-opening packet, but resource allocation for malformed non-CONNECT initial packets needs safe handling."
+  },
+  "spec_ref": {
+    "standard": "MQTT 3.1.1 / MQTT 5.0",
+    "section": "CONNECT packet and Fixed Header Remaining Length",
+    "entity": "Initial client packet",
+    "quote_or_summary": "A client opens an MQTT session with CONNECT; the fixed header carries Remaining Length for the current packet."
+  },
+  "statement": "Before allocating payload-sized state for a new connection, a broker must validate that the initial packet is a legal CONNECT packet and that the Remaining Length is acceptable for the connection phase.",
+  "condition": "A remote peer sends a non-CONNECT or malformed initial packet with a large Remaining Length.",
+  "expected_behavior": "The broker rejects or closes the connection before unbounded allocation.",
+  "violation_pattern": "The broker allocates memory based on an invalid initial packet before protocol-phase validation.",
+  "bound_goal": "Connection-state consistency and DoS resistance",
+  "strength": "L1",
+  "status": "candidate",
+  "related_cves": [
+    "CVE-2023-0809"
+  ],
+  "related_implementations": [
+    "mosquitto"
+  ],
+  "review": {
+    "review_status": "unreviewed",
+    "reviewer": "",
+    "review_notes": "Needs patch review to separate protocol compliance from general resource-limit policy."
+  }
+}

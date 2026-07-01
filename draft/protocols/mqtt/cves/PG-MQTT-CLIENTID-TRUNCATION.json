@@ -1,0 +1,42 @@
+{
+  "cve_id": "PG-MQTT-CLIENTID-TRUNCATION",
+  "protocol_id": "mqtt",
+  "implementation": "sol",
+  "affected_versions": [],
+  "summary": "ProtocolGuard motivation case: an oversized MQTT ClientId is copied into a fixed-size internal buffer and silently truncated, allowing distinct ClientIds to map to the same internal identity.",
+  "vulnerability_type": "protocol non-compliance / identity collision",
+  "related_message_or_field": [
+    "CONNECT.ClientId"
+  ],
+  "related_standard_refs": [
+    {
+      "standard": "MQTT 3.1.1",
+      "section": "3.1.3.1 Client Identifier",
+      "quote_or_summary": "The server must allow ClientIds between 1 and 23 UTF-8 encoded bytes and may allow longer ClientIds."
+    }
+  ],
+  "root_cause_summary": "The implementation accepts an oversized ClientId but stores only a truncated prefix, breaking the ClientId's identity/session purpose.",
+  "classification": {
+    "is_protocol_related": true,
+    "is_standard_compliance_related": "yes",
+    "explicit_or_implicit": "implicit",
+    "reason": "The explicit standard permits longer ClientIds but does not directly state the storage/normalization obligation; identity uniqueness is implied by the ClientId purpose."
+  },
+  "implicit_constraint_hypothesis": {
+    "direction_hint": "purpose_mechanism_gap",
+    "missing_or_ambiguous_spec_point": "The standard does not spell out how implementations must preserve identity uniqueness when accepting ClientIds longer than 23 bytes.",
+    "candidate_constraint": "If a server accepts an oversized ClientId, it must preserve the complete identifier or explicitly reject it; it must not silently truncate it into an identity collision.",
+    "bound_goal": "Client identity uniqueness and correct session management"
+  },
+  "evidence": {
+    "nvd_url": "",
+    "advisory_urls": [
+      "https://dx.doi.org/10.14722/ndss.2026.240521"
+    ],
+    "patch_urls": [],
+    "poc_urls": []
+  },
+  "review_status": "triaged",
+  "reviewer": "",
+  "notes": "Strong seed from the ProtocolGuard paper. Treat as motivation and reproduce carefully without publishing weaponized PoC details."
+}
