@@ -41,27 +41,82 @@ Artifact 中可以确认的路径：
 | uFTP | FTP / FTPS | `646404`（源码未确认） | [RFC 959](https://www.rfc-editor.org/rfc/rfc959.txt); [RFC 2228](https://www.rfc-editor.org/rfc/rfc2228.txt); [RFC 3659](https://www.rfc-editor.org/rfc/rfc3659.txt) | RFC 959 §4.1.1 USER/PASS/RNFR/RNTO; RFC 2228 AUTH/PBSZ/PROT; RFC 3659 REST | 论文 Table I 中的 Subject；当前上传的 `ProtocolGuard.zip` 中未确认源码路径。已检查候选仓库 https://github.com/troglobit/uftpd，该仓库是 C 语言 FTP/TFTP server，但未确认论文版本 `646404`，且未确认支持 RFC 2228 中的 AUTH/PBSZ/PROT 或 FTPS 语义，因此暂不确认，继续标记为 pending。 |
 | TLSE | TLS 1.3 | `1af154` | [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446.txt) | §4 Handshake Protocol; §4.1 Key Exchange Messages; §4.2 Extensions | https://github.com/eduardsui/tlse |
 | wolfSSL | TLS 1.3 | `7fb750` | [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446.txt) | §4.1 Handshake Protocol; §4.2.1 Supported Versions; §4.6.1 NewSessionTicket | https://github.com/wolfSSL/wolfssl |
-| llhttp | HTTP/1.1 parser | 待固定 | [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.txt); [RFC 9112](https://www.rfc-editor.org/rfc/rfc9112.txt) | RFC 9112 §2 Message; §3 Request Line; §5 Field Syntax; §6 Message Body | https://github.com/nodejs/llhttp |
-| HAProxy | HTTP/1.1 proxy | 待固定 | [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.txt); [RFC 9112](https://www.rfc-editor.org/rfc/rfc9112.txt) | RFC 9112 §6.1 Transfer-Encoding; §6.2 Content-Length; §9.3 Message Parsing Robustness | https://github.com/haproxy/haproxy |
-| nginx | HTTP/1.1 server/proxy | 待固定 | [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.txt); [RFC 9112](https://www.rfc-editor.org/rfc/rfc9112.txt) | RFC 9112 §3 Request Target; §5 Field Syntax; §6 Message Body | https://github.com/nginx/nginx |
-| Apache httpd | HTTP/1.1 server | 待固定 | [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.txt); [RFC 9112](https://www.rfc-editor.org/rfc/rfc9112.txt) | RFC 9110 §7 Routing HTTP Messages; RFC 9112 §6 Message Body | https://github.com/apache/httpd |
-| nghttp2 | HTTP/2 | 待固定 | [RFC 9113](https://www.rfc-editor.org/rfc/rfc9113.txt); [RFC 7541](https://www.rfc-editor.org/rfc/rfc7541.txt) | RFC 9113 §4 Frames; §5 Streams; §6 Frame Definitions; RFC 7541 §2.3 Header Table | https://github.com/nghttp2/nghttp2 |
-| h2o | HTTP/2 / HTTP/1.1 | 待固定 | [RFC 9112](https://www.rfc-editor.org/rfc/rfc9112.txt); [RFC 9113](https://www.rfc-editor.org/rfc/rfc9113.txt) | RFC 9113 §5 Stream States; §6.5 SETTINGS; RFC 9112 §6 Message Body | https://github.com/h2o/h2o |
-| quiche | QUIC / HTTP/3 | 待固定 | [RFC 9000](https://www.rfc-editor.org/rfc/rfc9000.txt); [RFC 9001](https://www.rfc-editor.org/rfc/rfc9001.txt); [RFC 9002](https://www.rfc-editor.org/rfc/rfc9002.txt); [RFC 9114](https://www.rfc-editor.org/rfc/rfc9114.txt) | RFC 9000 §4 Streams; §12 Packets and Frames; RFC 9114 §6 Stream Mapping; §7.2 SETTINGS | https://github.com/cloudflare/quiche |
-| ngtcp2 + nghttp3 | QUIC / HTTP/3 | 待固定 | [RFC 9000](https://www.rfc-editor.org/rfc/rfc9000.txt); [RFC 9114](https://www.rfc-editor.org/rfc/rfc9114.txt) | RFC 9000 §7 Connection Establishment; §10 Connection Termination; RFC 9114 §4 HTTP/3 Frames | https://github.com/ngtcp2/ngtcp2; https://github.com/ngtcp2/nghttp3 |
-| BIND 9 | DNS | 待固定 | [RFC 1034](https://www.rfc-editor.org/rfc/rfc1034.txt); [RFC 1035](https://www.rfc-editor.org/rfc/rfc1035.txt); [RFC 6891](https://www.rfc-editor.org/rfc/rfc6891.txt) | RFC 1035 §4.1.1 Header; §4.1.4 Message Compression; RFC 6891 §6 OPT RR | https://gitlab.isc.org/isc-projects/bind9 |
-| miekg/dns | DNS library | 待固定 | [RFC 1034](https://www.rfc-editor.org/rfc/rfc1034.txt); [RFC 1035](https://www.rfc-editor.org/rfc/rfc1035.txt) | RFC 1035 §4.1.2 Question; §4.1.3 Resource Records; §4.1.4 Compression | https://github.com/miekg/dns |
-| OpenSSL | TLS 1.3 / DTLS | 待固定 | [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446.txt); [RFC 9147](https://www.rfc-editor.org/rfc/rfc9147.txt) | RFC 8446 §4 Handshake; RFC 9147 §5 Record Layer; §7 Handshake | https://github.com/openssl/openssl |
-| mbedTLS | TLS 1.3 / DTLS | 待固定 | [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446.txt); [RFC 9147](https://www.rfc-editor.org/rfc/rfc9147.txt) | RFC 8446 §4.2 Extensions; RFC 9147 §4.2 Epoch and Sequence Number | https://github.com/Mbed-TLS/mbedtls |
-| Apache Qpid Proton | AMQP 1.0 | 待固定 | [OASIS AMQP 1.0](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-complete-v1.0-os.html) | AMQP 1.0 Transport: Connections, Sessions, Links, Frames, Delivery State | https://github.com/apache/qpid-proton |
-| RabbitMQ | AMQP 0-9-1 / AMQP 1.0 plugin | 待固定 | [AMQP 0-9-1](https://www.rabbitmq.com/resources/specs/amqp0-9-1.pdf); [OASIS AMQP 1.0](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-complete-v1.0-os.html) | AMQP 0-9-1 Method Frame; Connection.Start/Tune/Open; Channel.Open; Queue.Declare | https://github.com/rabbitmq/rabbitmq-server |
-| librdkafka | Kafka Protocol | 待固定 | [Apache Kafka Protocol](https://kafka.apache.org/protocol) | Request Header; ApiVersions; Metadata; Produce; Fetch; Consumer Group APIs | https://github.com/confluentinc/librdkafka |
-| Apache Kafka | Kafka Protocol | 待固定 | [Apache Kafka Protocol](https://kafka.apache.org/protocol) | ApiVersions; Metadata; Produce; Fetch; JoinGroup/SyncGroup | https://github.com/apache/kafka |
-| Dropbear SSH | SSH | 待固定 | [RFC 4251](https://www.rfc-editor.org/rfc/rfc4251.txt); [RFC 4252](https://www.rfc-editor.org/rfc/rfc4252.txt); [RFC 4253](https://www.rfc-editor.org/rfc/rfc4253.txt); [RFC 4254](https://www.rfc-editor.org/rfc/rfc4254.txt) | RFC 4253 §7 Key Exchange; RFC 4252 §5 Authentication; RFC 4254 §5 Channel Mechanism | https://github.com/mkj/dropbear |
-| chrony | NTPv4 | 待固定 | [RFC 5905](https://www.rfc-editor.org/rfc/rfc5905.txt) | §7 Packet Format; §8 On-Wire Protocol; §9 Peer Process | https://gitlab.com/chrony/chrony |
-| Net-SNMP | SNMPv3 | 待固定 | [RFC 3411](https://www.rfc-editor.org/rfc/rfc3411.txt); [RFC 3412](https://www.rfc-editor.org/rfc/rfc3412.txt); [RFC 3414](https://www.rfc-editor.org/rfc/rfc3414.txt) | RFC 3412 §6 Message Processing; RFC 3414 §3 USM Timeliness; §3.2 Message Security | https://github.com/net-snmp/net-snmp |
-| libmodbus | Modbus TCP | 待固定 | [Modbus Application Protocol](https://modbus.org/specs.php) | MBAP Header; Function Code; Length Field; Unit Identifier | https://github.com/stephane/libmodbus |
-| open62541 | OPC UA | 待固定 | [OPC UA Core Specification](https://reference.opcfoundation.org/Core/) | SecureChannel; Session; MessageChunk; Service Request/Response | https://github.com/open62541/open62541 |
+| llhttp | HTTP/1.1 parser | `v9.4.2` | [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.txt); [RFC 9112](https://www.rfc-editor.org/rfc/rfc9112.txt) | RFC 9112 §2 Message; §3 Request Line; §5 Field Syntax; §6 Message Body | https://github.com/nodejs/llhttp |
+| HAProxy | HTTP/1.1 proxy | `v3.4.0` | [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.txt); [RFC 9112](https://www.rfc-editor.org/rfc/rfc9112.txt) | RFC 9112 §6.1 Transfer-Encoding; §6.2 Content-Length; §9.3 Message Parsing Robustness | https://github.com/haproxy/haproxy |
+| nginx | HTTP/1.1 server/proxy | `release-1.31.2` | [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.txt); [RFC 9112](https://www.rfc-editor.org/rfc/rfc9112.txt) | RFC 9112 §3 Request Target; §5 Field Syntax; §6 Message Body | https://github.com/nginx/nginx |
+| Apache httpd | HTTP/1.1 server | `2.4.68` | [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.txt); [RFC 9112](https://www.rfc-editor.org/rfc/rfc9112.txt) | RFC 9110 §7 Routing HTTP Messages; RFC 9112 §6 Message Body | https://github.com/apache/httpd |
+| nghttp2 | HTTP/2 | `v1.69.0` | [RFC 9113](https://www.rfc-editor.org/rfc/rfc9113.txt); [RFC 7541](https://www.rfc-editor.org/rfc/rfc7541.txt) | RFC 9113 §4 Frames; §5 Streams; §6 Frame Definitions; RFC 7541 §2.3 Header Table | https://github.com/nghttp2/nghttp2 |
+| h2o | HTTP/2 / HTTP/1.1 | `v2.2.6` | [RFC 9112](https://www.rfc-editor.org/rfc/rfc9112.txt); [RFC 9113](https://www.rfc-editor.org/rfc/rfc9113.txt) | RFC 9113 §5 Stream States; §6.5 SETTINGS; RFC 9112 §6 Message Body | https://github.com/h2o/h2o |
+| quiche | QUIC / HTTP/3 | `0.29.2` | [RFC 9000](https://www.rfc-editor.org/rfc/rfc9000.txt); [RFC 9001](https://www.rfc-editor.org/rfc/rfc9001.txt); [RFC 9002](https://www.rfc-editor.org/rfc/rfc9002.txt); [RFC 9114](https://www.rfc-editor.org/rfc/rfc9114.txt) | RFC 9000 §4 Streams; §12 Packets and Frames; RFC 9114 §6 Stream Mapping; §7.2 SETTINGS | https://github.com/cloudflare/quiche |
+| ngtcp2 + nghttp3 | QUIC / HTTP/3 | ngtcp2 `v1.24.0`; nghttp3 `v1.17.0` | [RFC 9000](https://www.rfc-editor.org/rfc/rfc9000.txt); [RFC 9114](https://www.rfc-editor.org/rfc/rfc9114.txt) | RFC 9000 §7 Connection Establishment; §10 Connection Termination; RFC 9114 §4 HTTP/3 Frames | https://github.com/ngtcp2/ngtcp2; https://github.com/ngtcp2/nghttp3 |
+| BIND 9 | DNS | `v9.21.23` | [RFC 1034](https://www.rfc-editor.org/rfc/rfc1034.txt); [RFC 1035](https://www.rfc-editor.org/rfc/rfc1035.txt); [RFC 6891](https://www.rfc-editor.org/rfc/rfc6891.txt) | RFC 1035 §4.1.1 Header; §4.1.4 Message Compression; RFC 6891 §6 OPT RR | https://gitlab.isc.org/isc-projects/bind9 |
+| miekg/dns | DNS library | `v1.1.72` | [RFC 1034](https://www.rfc-editor.org/rfc/rfc1034.txt); [RFC 1035](https://www.rfc-editor.org/rfc/rfc1035.txt) | RFC 1035 §4.1.2 Question; §4.1.3 Resource Records; §4.1.4 Compression | https://github.com/miekg/dns |
+| OpenSSL | TLS 1.3 / DTLS | `openssl-4.0.1` | [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446.txt); [RFC 9147](https://www.rfc-editor.org/rfc/rfc9147.txt) | RFC 8446 §4 Handshake; RFC 9147 §5 Record Layer; §7 Handshake | https://github.com/openssl/openssl |
+| mbedTLS | TLS 1.3 / DTLS | `mbedtls-4.1.0` | [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446.txt); [RFC 9147](https://www.rfc-editor.org/rfc/rfc9147.txt) | RFC 8446 §4.2 Extensions; RFC 9147 §4.2 Epoch and Sequence Number | https://github.com/Mbed-TLS/mbedtls |
+| Apache Qpid Proton | AMQP 1.0 | `0.40.0` | [OASIS AMQP 1.0](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-complete-v1.0-os.html) | AMQP 1.0 Transport: Connections, Sessions, Links, Frames, Delivery State | https://github.com/apache/qpid-proton |
+| RabbitMQ | AMQP 0-9-1 / AMQP 1.0 plugin | `v4.3.2` | [AMQP 0-9-1](https://www.rabbitmq.com/resources/specs/amqp0-9-1.pdf); [OASIS AMQP 1.0](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-complete-v1.0-os.html) | AMQP 0-9-1 Method Frame; Connection.Start/Tune/Open; Channel.Open; Queue.Declare | https://github.com/rabbitmq/rabbitmq-server |
+| librdkafka | Kafka Protocol | `v2.15.0` | [Apache Kafka Protocol](https://kafka.apache.org/protocol) | Request Header; ApiVersions; Metadata; Produce; Fetch; Consumer Group APIs | https://github.com/confluentinc/librdkafka |
+| Apache Kafka | Kafka Protocol | `4.3.1` | [Apache Kafka Protocol](https://kafka.apache.org/protocol) | ApiVersions; Metadata; Produce; Fetch; JoinGroup/SyncGroup | https://github.com/apache/kafka |
+| Dropbear SSH | SSH | `DROPBEAR_2026.91` | [RFC 4251](https://www.rfc-editor.org/rfc/rfc4251.txt); [RFC 4252](https://www.rfc-editor.org/rfc/rfc4252.txt); [RFC 4253](https://www.rfc-editor.org/rfc/rfc4253.txt); [RFC 4254](https://www.rfc-editor.org/rfc/rfc4254.txt) | RFC 4253 §7 Key Exchange; RFC 4252 §5 Authentication; RFC 4254 §5 Channel Mechanism | https://github.com/mkj/dropbear |
+| chrony | NTPv4 | `4.8` | [RFC 5905](https://www.rfc-editor.org/rfc/rfc5905.txt) | §7 Packet Format; §8 On-Wire Protocol; §9 Peer Process | https://gitlab.com/chrony/chrony |
+| Net-SNMP | SNMPv3 | `v5.9.5.2` | [RFC 3411](https://www.rfc-editor.org/rfc/rfc3411.txt); [RFC 3412](https://www.rfc-editor.org/rfc/rfc3412.txt); [RFC 3414](https://www.rfc-editor.org/rfc/rfc3414.txt) | RFC 3412 §6 Message Processing; RFC 3414 §3 USM Timeliness; §3.2 Message Security | https://github.com/net-snmp/net-snmp |
+| libmodbus | Modbus TCP | `v3.1.12` | [Modbus Application Protocol](https://modbus.org/specs.php) | MBAP Header; Function Code; Length Field; Unit Identifier | https://github.com/stephane/libmodbus |
+| open62541 | OPC UA | `v1.5.5` | [OPC UA Core Specification](https://reference.opcfoundation.org/Core/) | SecureChannel; Session; MessageChunk; Service Request/Response | https://github.com/open62541/open62541 |
+
+### 2.1 Version / LoC 核对表
+
+本表用于集中记录 Version / Commit / Tag 与 LoC。ProtocolGuard Table I 中已有的 11 个 Subject 使用论文表格给出的 Version 和 LoC；新增候选 Subject 已优先选择 upstream 的稳定 tag/release。新增项的 LoC 暂记为“待统计”，后续应在固定 tag 上用统一工具统计，避免不同分支或统计口径导致不可复现。
+
+| Subject (Implementation) | Protocol | Version / Commit / Tag | LoC | LoC 来源 / 状态 |
+|---|---|---|---|---|
+| Sol | MQTT 3.1.1 | `373d8` | 4.4K | ProtocolGuard Table I |
+| TinyMQTT | MQTT 3.1.1 | `6226ad`（源码未确认） | 11.5K | ProtocolGuard Table I；源码路径 pending |
+| Mosquitto | MQTT 5.0 | `849e0f` | 46.2K | ProtocolGuard Table I |
+| libcoap | CoAP | `17c3fe` | 45.3K | ProtocolGuard Table I |
+| FreeCoAP | CoAP | `3adc2e` | 26.6K | ProtocolGuard Table I |
+| pure-ftpd | FTP / FTPS | `381857` | 22.2K | ProtocolGuard Table I |
+| uFTP | FTP / FTPS | `646404`（源码未确认） | 6.7K | ProtocolGuard Table I；源码路径 pending |
+| TLSE | TLS 1.3 | `1af154` | 41.8K | ProtocolGuard Table I |
+| wolfSSL | TLS 1.3 | `7fb750` | 1456.3K | ProtocolGuard Table I |
+| Dnsmasq | DHCPv6 / DNS | `2.91` | 33.4K | ProtocolGuard Table I |
+| NDHS | DHCPv6 | `4b2728`; 候选上游 commit `4b2728a` | 5.6K | ProtocolGuard Table I；candidate upstream / commit 已确认，Docker validation pending |
+| llhttp | HTTP/1.1 parser | `v9.4.2` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| HAProxy | HTTP/1.1 proxy | `v3.4.0` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| nginx | HTTP/1.1 server/proxy | `release-1.31.2` | 待统计 | 已选择 upstream release tag；LoC 后续在该 tag 上统计 |
+| Apache httpd | HTTP/1.1 server | `2.4.68` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| nghttp2 | HTTP/2 | `v1.69.0` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| h2o | HTTP/2 / HTTP/1.1 | `v2.2.6` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| quiche | QUIC / HTTP/3 | `0.29.2` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| ngtcp2 + nghttp3 | QUIC / HTTP/3 | ngtcp2 `v1.24.0`; nghttp3 `v1.17.0` | 待统计 | 已分别选择 ngtcp2/nghttp3 upstream 稳定 tag；LoC 后续分别统计后汇总 |
+| BIND 9 | DNS | `v9.21.23` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| miekg/dns | DNS library | `v1.1.72` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| OpenSSL | TLS 1.3 / DTLS | `openssl-4.0.1` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| mbedTLS | TLS 1.3 / DTLS | `mbedtls-4.1.0` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| Apache Qpid Proton | AMQP 1.0 | `0.40.0` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| RabbitMQ | AMQP 0-9-1 / AMQP 1.0 plugin | `v4.3.2` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| librdkafka | Kafka Protocol | `v2.15.0` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| Apache Kafka | Kafka Protocol | `4.3.1` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| Dropbear SSH | SSH | `DROPBEAR_2026.91` | 待统计 | 已选择 upstream release tag；LoC 后续在该 tag 上统计 |
+| chrony | NTPv4 | `4.8` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| Net-SNMP | SNMPv3 | `v5.9.5.2` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| libmodbus | Modbus TCP | `v3.1.12` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| open62541 | OPC UA | `v1.5.5` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| lwIP | TCP/IP stack | `STABLE-2_0_1` | 待统计 | 已选择 upstream stable tag；LoC 后续在该 tag 上统计 |
+| lksctp-tools | SCTP | `v1.0.21` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| libwebsockets | WebSocket | `v4.5.8` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| OpenLDAP | LDAPv3 | `OPENLDAP_REL_ENG_2_6_13` | 待统计 | 已选择 upstream release tag；LoC 后续在该 tag 上统计 |
+| FreeRADIUS | RADIUS | `release_3_2_10` | 待统计 | 已选择 upstream release tag；LoC 后续在该 tag 上统计 |
+| FRRouting | BGP-4 | `frr-10.6.1` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| Postfix | SMTP | `v3.11.4` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| Dovecot | IMAP / POP3 | `2.4.4` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| Redis | Redis RESP | `8.8.0` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| memcached | Memcached text/binary | `1.6.42` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| PostgreSQL | PostgreSQL wire protocol | `REL_18_4` | 待统计 | 已选择 upstream release tag；LoC 后续在该 tag 上统计 |
+| NATS Server | NATS protocol | `v2.14.3` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| Kamailio | SIP | `6.1.3` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| live555 | RTSP / RTP | upstream release package 待确认 | 待统计 | live555 非 GitHub tag 形态；需后续固定源码包日期版本 |
+| rsyslog | Syslog | `v8.2606.0` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
+| Fast DDS | DDS-RTPS | `v3.6.1` | 待统计 | 已选择 upstream 稳定 tag；LoC 后续在该 tag 上统计 |
 
 ## 3. 推荐试点（Pilot Recommendation）
 
@@ -167,7 +222,6 @@ Priority 是 Subject-level 的实验可行性排序；推荐 Pilot 是 Protocol-
 | `Subject (Implementation)` | 具体代码实现，是后续可构建、运行、插桩、fuzzing 或对比分析的对象。 |
 | `Specification` | 协议标准来源，优先使用 RFC、OASIS 或官方标准链接。 |
 | `Version / Commit / Tag` | 用于固定代码版本。Specification 和 Section 说明“依据哪份标准”，commit/tag 说明“分析哪一版代码”。二者都需要保留，否则后续实验不可复现。 |
+| `LoC` | 代码规模。论文 Table I Subject 使用论文给出的 LoC；新增 Subject 需要先固定 commit/tag，再用统一工具统计，避免不同分支或统计口径导致不可复现。 |
 | `Spec Section / Field Binding` | 标准字段、消息、状态或 Section 位置，是后续 CVE 和约束分析的定位依据。 |
 | `Repo / Artifact Source` | upstream 代码或 Artifact 中可确认的源码来源；不确定则标 `pending` 或“待确认”。 |
-
-
